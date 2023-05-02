@@ -14,10 +14,12 @@ namespace Final_Game_Project
             Intro,
             Options,
             OpeningAnimation,
+            House,
             End
         }
         Screen screen;
         MouseState mouseState;
+        KeyboardState keyboardState;
         Texture2D introScreenTexture;
         Rectangle introScreenRect;
         Texture2D titleTexture;
@@ -31,6 +33,10 @@ namespace Final_Game_Project
         Texture2D buttonTexture;     
         Rectangle startButtonCollisionRect;
         Rectangle optionsButtonCollisionRect;
+        Texture2D mainCharacterSpritesheet;
+        Texture2D mainCharacterTexture;
+        Rectangle mainCharacterRect;
+        Rectangle sourceRect;
         //VideoPlayer videoPlayer;
         //Video openingAnimation;     
 
@@ -59,6 +65,7 @@ namespace Final_Game_Project
             paperBackgroundRect2 = new Rectangle(100, 50, 600, 500);           
             startButtonCollisionRect = new Rectangle(200, 320, 410, 70);
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
+            mainCharacterRect = new Rectangle(300, 300, 49, 105);
             //videoPlayer = new VideoPlayer();
 
             base.Initialize();
@@ -74,6 +81,12 @@ namespace Final_Game_Project
             paperBackgroundTexture = Content.Load<Texture2D>("paper");
             optionsBackgroundTexture = Content.Load<Texture2D>("optionsScreen");
             buttonTexture = Content.Load<Texture2D>("buttonTexture");
+            mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");          
+            sourceRect = new Rectangle(1, 1, 49, 105);
+            mainCharacterTexture = new Texture2D(GraphicsDevice, sourceRect.Width, sourceRect.Height);
+            Color[] data = new Color[sourceRect.Width * sourceRect.Height];
+            mainCharacterSpritesheet.GetData(0, sourceRect, data, 0, data.Length);
+            mainCharacterTexture.SetData(data);
             //openingAnimation = Content.Load<Video>("openingAnimation")
         }
 
@@ -83,6 +96,7 @@ namespace Final_Game_Project
                 Exit();
 
             mouseState = Mouse.GetState();
+            keyboardState = Keyboard.GetState();
 
             if (screen == Screen.Intro)
             {
@@ -106,8 +120,30 @@ namespace Final_Game_Project
             if (screen == Screen.OpeningAnimation)
             {
                 //videoPlayer.Play(openingAnimation);
+                if (keyboardState.IsKeyDown(Keys.M))
+                {
+                    screen = Screen.House;
+                }
             }
-
+            if (screen == Screen.House)
+            {
+                if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    mainCharacterRect.Y -= 2;
+                }
+                if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    mainCharacterRect.Y += 2;
+                }
+                if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    mainCharacterRect.X += 2;
+                }
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    mainCharacterRect.X -= 2;
+                }
+            }
                 base.Update(gameTime);
         }
 
@@ -135,14 +171,18 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                //_spriteBatch.Draw(videoPlayer.GetTexture, new Rectangle(0, 0, 800, 600), Color.White);
+                //_spriteBatch.Draw(videoPlayer.GetTexture, new Rectangle(0, 0, 800, 600), Color.White);              
+            }
+            else if (screen == Screen.House)
+            {
+                _spriteBatch.Draw(mainCharacterTexture, mainCharacterRect, Color.White);
             }
             _spriteBatch.End();
-
-            //To Do:
-            //add custom icon to monogame file
-
+        
             base.Draw(gameTime);
         }
     }
+
+    //To Do:
+    //add custom icon to monogame file
 }
