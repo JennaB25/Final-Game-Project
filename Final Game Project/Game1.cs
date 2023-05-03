@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using System;
+using System.Collections.Generic;
 
 namespace Final_Game_Project
 {
@@ -34,12 +35,18 @@ namespace Final_Game_Project
         Rectangle startButtonCollisionRect;
         Rectangle optionsButtonCollisionRect;
         Texture2D mainCharacterSpritesheet;
-        Texture2D mainCharacterTexture;
+        List<Texture2D> mainCharacterTextures;
         Rectangle mainCharacterRect;
+        Texture2D cropTexture;
         Rectangle sourceRect;
-        //VideoPlayer videoPlayer;
-        //Video openingAnimation;     
-
+        bool walking;
+        int walkingValue;
+        string characterFacing;
+        string up;
+        string down;
+        string left;
+        string right;
+            
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -66,7 +73,10 @@ namespace Final_Game_Project
             startButtonCollisionRect = new Rectangle(200, 320, 410, 70);
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
             mainCharacterRect = new Rectangle(300, 300, 49, 105);
-            //videoPlayer = new VideoPlayer();
+            mainCharacterTextures = new List<Texture2D>();
+            walking = false;
+            walkingValue = 1;
+            characterFacing = down;
 
             base.Initialize();
         }
@@ -81,13 +91,20 @@ namespace Final_Game_Project
             paperBackgroundTexture = Content.Load<Texture2D>("paper");
             optionsBackgroundTexture = Content.Load<Texture2D>("optionsScreen");
             buttonTexture = Content.Load<Texture2D>("buttonTexture");
-            mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");          
-            sourceRect = new Rectangle(1, 1, 49, 105);
-            mainCharacterTexture = new Texture2D(GraphicsDevice, sourceRect.Width, sourceRect.Height);
-            Color[] data = new Color[sourceRect.Width * sourceRect.Height];
-            mainCharacterSpritesheet.GetData(0, sourceRect, data, 0, data.Length);
-            mainCharacterTexture.SetData(data);
-            //openingAnimation = Content.Load<Video>("openingAnimation")
+            mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");           
+            int width = mainCharacterSpritesheet.Width / 12;
+            int height = mainCharacterSpritesheet.Height;
+            for (int y = 0; y < 1; y++) 
+                for (int x = 0; x < 12; x++) 
+                {
+                    sourceRect = new Rectangle(x * width, y * height, width, height);
+                    cropTexture = new Texture2D(GraphicsDevice, width, height);
+                    Color[] data = new Color[width * height];
+                    mainCharacterSpritesheet.GetData(0, sourceRect, data, 0, data.Length);
+                    cropTexture.SetData(data);
+                    if (mainCharacterTextures.Count < 12)
+                        mainCharacterTextures.Add(cropTexture);
+                }                 
         }
 
         protected override void Update(GameTime gameTime)
@@ -118,8 +135,7 @@ namespace Final_Game_Project
                     screen = Screen.Intro;
             }
             if (screen == Screen.OpeningAnimation)
-            {
-                //videoPlayer.Play(openingAnimation);
+            {               
                 if (keyboardState.IsKeyDown(Keys.M))
                 {
                     screen = Screen.House;
@@ -130,19 +146,30 @@ namespace Final_Game_Project
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     mainCharacterRect.Y -= 2;
+                    characterFacing = up;
                 }
                 if (keyboardState.IsKeyDown(Keys.Down))
                 {
-                    mainCharacterRect.Y += 2;
+                    characterFacing = down;
+                    walking = true;
+                    if (walking)
+                    {
+                        mainCharacterRect.Y += 2;
+                    }   
                 }
+                if (keyboardState.IsKeyUp(Keys.Down))
+                    walking = false;
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
                     mainCharacterRect.X += 2;
+                    characterFacing = right;
                 }
                 if (keyboardState.IsKeyDown(Keys.Left))
                 {
                     mainCharacterRect.X -= 2;
+                    characterFacing = left;
                 }
+               
             }
                 base.Update(gameTime);
         }
@@ -171,11 +198,43 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                //_spriteBatch.Draw(videoPlayer.GetTexture, new Rectangle(0, 0, 800, 600), Color.White);              
+
             }
             else if (screen == Screen.House)
-            {
-                _spriteBatch.Draw(mainCharacterTexture, mainCharacterRect, Color.White);
+            {    
+                if (characterFacing == up)
+                {
+                    _spriteBatch.Draw(mainCharacterTextures[4], mainCharacterRect, Color.White);
+                }
+                else if (characterFacing == down)
+                {
+                    if (walking)
+                    {
+                        if (walkingValue == 1)
+                        {
+                            _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                            walkingValue *= -1;
+                        }
+                        else if (walkingValue == -1)
+                        {
+                            _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
+                            walkingValue *= -1;
+                        }
+                    }
+                    else
+                    {
+                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
+                    }
+                }
+                else if (characterFacing == right)
+                {
+                    _spriteBatch.Draw(mainCharacterTextures[7], mainCharacterRect, Color.White);
+                }
+                else if (characterFacing == left)
+                {
+                    _spriteBatch.Draw(mainCharacterTextures[10], mainCharacterRect, Color.White);
+                }
+
             }
             _spriteBatch.End();
         
@@ -185,4 +244,8 @@ namespace Final_Game_Project
 
     //To Do:
     //add custom icon to monogame file
+    //sourceRect1 = new Rectangle(1, 1, 49, 105);
+    //sourceRect2 = new Rectangle(51, 1, 49, 105);
+    //sourceRect2 = new Rectangle(102, 1, 49, 105);
+    
 }
