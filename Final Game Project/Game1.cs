@@ -39,13 +39,14 @@ namespace Final_Game_Project
         Rectangle mainCharacterRect;
         Texture2D cropTexture;
         Rectangle sourceRect;
+        Texture2D bedroomTexture;
+        Rectangle bedroomRect;
         bool walking;
-        int walkingValue;
-        string characterFacing;
-        string up;
-        string down;
-        string left;
-        string right;
+        int walkingValue;       
+        bool up;
+        bool down;
+        bool left;
+        bool right;
             
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -74,9 +75,9 @@ namespace Final_Game_Project
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
             mainCharacterRect = new Rectangle(300, 300, 49, 105);
             mainCharacterTextures = new List<Texture2D>();
+            bedroomRect = new Rectangle(-60, 0, 900, 600);
             walking = false;
-            walkingValue = 1;
-            characterFacing = down;
+            walkingValue = 1;        
 
             base.Initialize();
         }
@@ -91,7 +92,8 @@ namespace Final_Game_Project
             paperBackgroundTexture = Content.Load<Texture2D>("paper");
             optionsBackgroundTexture = Content.Load<Texture2D>("optionsScreen");
             buttonTexture = Content.Load<Texture2D>("buttonTexture");
-            mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");           
+            mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");
+            bedroomTexture = Content.Load<Texture2D>("bedroom");
             int width = mainCharacterSpritesheet.Width / 12;
             int height = mainCharacterSpritesheet.Height;
             for (int y = 0; y < 1; y++) 
@@ -113,7 +115,7 @@ namespace Final_Game_Project
                 Exit();
 
             mouseState = Mouse.GetState();
-            keyboardState = Keyboard.GetState();
+            keyboardState = Keyboard.GetState();          
 
             if (screen == Screen.Intro)
             {
@@ -145,38 +147,47 @@ namespace Final_Game_Project
             {
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
+                    up = true;
                     mainCharacterRect.Y -= 2;
-                    characterFacing = up;
                 }
+                else
+                    up = false;
+                    down = true;
                 if (keyboardState.IsKeyDown(Keys.Down))
                 {
-                    characterFacing = down;
+                    down = true;
                     walking = true;
                     if (walking)
                     {
                         mainCharacterRect.Y += 2;
                     }   
                 }
-                if (keyboardState.IsKeyUp(Keys.Down))
+                else                   
                     walking = false;
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
-                    mainCharacterRect.X += 2;
-                    characterFacing = right;
+                    right = true;
+                    mainCharacterRect.X += 2;                 
                 }
+                else
+                    right = false;
+                    down = true;
                 if (keyboardState.IsKeyDown(Keys.Left))
                 {
-                    mainCharacterRect.X -= 2;
-                    characterFacing = left;
+                    left = true;
+                    mainCharacterRect.X -= 2;                 
                 }
-               
+                else
+                    left = false;
+                    down = true;
+
             }
                 base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Bisque);
+            GraphicsDevice.Clear(Color.LightBlue);
 
             _spriteBatch.Begin();
             if (screen == Screen.Intro)
@@ -201,12 +212,21 @@ namespace Final_Game_Project
 
             }
             else if (screen == Screen.House)
-            {    
-                if (characterFacing == up)
+            {
+                _spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
+                if (up)
                 {
-                    _spriteBatch.Draw(mainCharacterTextures[4], mainCharacterRect, Color.White);
+                    _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
                 }
-                else if (characterFacing == down)
+                else if (right)
+                {
+                    _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);
+                }
+                else if (left)
+                {
+                    _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);
+                }
+                else if (down)
                 {
                     if (walking)
                     {
@@ -226,14 +246,7 @@ namespace Final_Game_Project
                         _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
                     }
                 }
-                else if (characterFacing == right)
-                {
-                    _spriteBatch.Draw(mainCharacterTextures[7], mainCharacterRect, Color.White);
-                }
-                else if (characterFacing == left)
-                {
-                    _spriteBatch.Draw(mainCharacterTextures[10], mainCharacterRect, Color.White);
-                }
+                
 
             }
             _spriteBatch.End();
@@ -244,8 +257,6 @@ namespace Final_Game_Project
 
     //To Do:
     //add custom icon to monogame file
-    //sourceRect1 = new Rectangle(1, 1, 49, 105);
-    //sourceRect2 = new Rectangle(51, 1, 49, 105);
-    //sourceRect2 = new Rectangle(102, 1, 49, 105);
+    //add a pixel sky background to bedroom
     
 }
