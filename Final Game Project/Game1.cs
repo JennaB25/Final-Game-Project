@@ -41,8 +41,10 @@ namespace Final_Game_Project
         Rectangle sourceRect;
         Texture2D bedroomTexture;
         Rectangle bedroomRect;
-        bool walking;
-        int walkingValue;       
+        Texture2D skyBackgroundTexture;
+        Rectangle skyBackgroundRect;
+        Rectangle collisionRect;
+        bool walking;      
         bool up;
         bool down;
         bool left;
@@ -76,8 +78,9 @@ namespace Final_Game_Project
             mainCharacterRect = new Rectangle(300, 300, 49, 105);
             mainCharacterTextures = new List<Texture2D>();
             bedroomRect = new Rectangle(-60, 0, 900, 600);
-            walking = false;
-            walkingValue = 1;        
+            skyBackgroundRect = new Rectangle(0, 0, 800, 600);
+            collisionRect = new Rectangle(60, 0, 10, 300);
+            walking = false;        
 
             base.Initialize();
         }
@@ -94,6 +97,7 @@ namespace Final_Game_Project
             buttonTexture = Content.Load<Texture2D>("buttonTexture");
             mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");
             bedroomTexture = Content.Load<Texture2D>("bedroom");
+            skyBackgroundTexture = Content.Load<Texture2D>("skyBackground");
             int width = mainCharacterSpritesheet.Width / 12;
             int height = mainCharacterSpritesheet.Height;
             for (int y = 0; y < 1; y++) 
@@ -213,6 +217,7 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.House)
             {
+                _spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
                 _spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
                 if (up)
                 {
@@ -230,16 +235,8 @@ namespace Final_Game_Project
                 {
                     if (walking)
                     {
-                        if (walkingValue == 1)
-                        {
-                            _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
-                            walkingValue *= -1;
-                        }
-                        else if (walkingValue == -1)
-                        {
-                            _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
-                            walkingValue *= -1;
-                        }
+                         _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                         _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);  
                     }
                     else
                     {
@@ -256,7 +253,7 @@ namespace Final_Game_Project
     }
 
     //To Do:
-    //add custom icon to monogame file
-    //add a pixel sky background to bedroom
+    //add collison rects
+    
     
 }
