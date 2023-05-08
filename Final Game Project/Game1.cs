@@ -43,7 +43,13 @@ namespace Final_Game_Project
         Rectangle bedroomRect;
         Texture2D skyBackgroundTexture;
         Rectangle skyBackgroundRect;
-        Rectangle collisionRect;
+        Rectangle introAnimationRect;
+        //Rectangle collisionRect;
+        float seconds;
+        float startTime;
+
+        List<Texture2D> introAnimation;
+
         bool walking;      
         bool up;
         bool down;
@@ -67,6 +73,8 @@ namespace Final_Game_Project
             _graphics.ApplyChanges();
             this.Window.Title = "Kovari Mail";
 
+            introAnimation = new List<Texture2D>();
+
             screen = Screen.Intro;
             introScreenRect = new Rectangle(0, 0, 800, 600);
             titleRect = new Rectangle(130, 100, 550, 100);
@@ -79,7 +87,8 @@ namespace Final_Game_Project
             mainCharacterTextures = new List<Texture2D>();
             bedroomRect = new Rectangle(-60, 0, 900, 600);
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
-            collisionRect = new Rectangle(60, 0, 10, 300);
+            introAnimationRect = new Rectangle(0, 0, 800, 600);
+            //collisionRect = new Rectangle(60, 0, 10, 300);
             walking = false;        
 
             base.Initialize();
@@ -88,6 +97,12 @@ namespace Final_Game_Project
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            for (int i  = 0; i < 53; i++)
+            {
+                introAnimation.Add(Content.Load<Texture2D>("IntroAnimation/animation " + i));
+            }
+
 
             introScreenTexture = Content.Load<Texture2D>("introscreen");
             titleTexture = Content.Load<Texture2D>("title");
@@ -119,7 +134,8 @@ namespace Final_Game_Project
                 Exit();
 
             mouseState = Mouse.GetState();
-            keyboardState = Keyboard.GetState();          
+            keyboardState = Keyboard.GetState();
+            seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
 
             if (screen == Screen.Intro)
             {
@@ -135,19 +151,20 @@ namespace Final_Game_Project
                     }
                 }
             }
-            if (screen == Screen.Options)
+            else if (screen == Screen.Options)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.B))
                     screen = Screen.Intro;
             }
-            if (screen == Screen.OpeningAnimation)
-            {               
-                if (keyboardState.IsKeyDown(Keys.M))
-                {
+            else if (screen == Screen.OpeningAnimation)
+            {
+                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                if (seconds >= 10)
+                {                   
                     screen = Screen.House;
-                }
+                }              
             }
-            if (screen == Screen.House)
+            else if (screen == Screen.House)
             {
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
@@ -193,7 +210,7 @@ namespace Final_Game_Project
         {
             GraphicsDevice.Clear(Color.LightBlue);
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin();          
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(introScreenTexture, introScreenRect, Color.White);
@@ -213,7 +230,10 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-
+                int i;              
+                i = 1;
+                _spriteBatch.Draw(introAnimation[i], introAnimationRect, Color.White);
+                i += 1;
             }
             else if (screen == Screen.House)
             {
