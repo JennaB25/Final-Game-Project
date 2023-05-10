@@ -44,6 +44,7 @@ namespace Final_Game_Project
         Texture2D skyBackgroundTexture;
         Rectangle skyBackgroundRect;
         Rectangle introAnimationRect;
+        int animationNum;
         //Rectangle collisionRect;
         float seconds;
         float startTime;
@@ -89,7 +90,8 @@ namespace Final_Game_Project
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
             introAnimationRect = new Rectangle(0, 0, 800, 600);
             //collisionRect = new Rectangle(60, 0, 10, 300);
-            walking = false;        
+            walking = false;
+            animationNum = 0;
 
             base.Initialize();
         }
@@ -136,7 +138,7 @@ namespace Final_Game_Project
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
             seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
-
+            this.Window.Title = seconds.ToString();
             if (screen == Screen.Intro)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
@@ -144,6 +146,7 @@ namespace Final_Game_Project
                     if (startButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
                         screen = Screen.OpeningAnimation;
+                        startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
@@ -154,12 +157,11 @@ namespace Final_Game_Project
             else if (screen == Screen.Options)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.B))
-                    screen = Screen.Intro;
+                    screen = Screen.Intro;                
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
-                if (seconds >= 10)
+                if (seconds >= 5)
                 {                   
                     screen = Screen.House;
                 }              
@@ -230,10 +232,18 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                int i;              
-                i = 1;
-                _spriteBatch.Draw(introAnimation[i], introAnimationRect, Color.White);
-                i += 1;
+                if (Math.Round(seconds) % 2 == 0)
+                {
+                    if (animationNum < 52)
+                    {
+                        _spriteBatch.Draw(introAnimation[animationNum], introAnimationRect, Color.White);
+                        animationNum += 1;
+                    }
+                    else if (animationNum == 52)
+                    {
+                        _spriteBatch.Draw(introAnimation[52], introAnimationRect, Color.White);
+                    }
+                } 
             }
             else if (screen == Screen.House)
             {
