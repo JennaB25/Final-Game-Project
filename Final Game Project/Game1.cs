@@ -15,7 +15,7 @@ namespace Final_Game_Project
             Intro,
             Options,
             OpeningAnimation,
-            House,
+            TrainStation,
             End
         }
         Screen screen;
@@ -45,6 +45,8 @@ namespace Final_Game_Project
         Rectangle skyBackgroundRect;
         Rectangle introAnimationRect;
         int animationNum;
+        Texture2D trainStationBackgroundTexture;
+        Rectangle trainStationBackgroundRect;
         //Rectangle collisionRect;
         float seconds;
         float startTime;
@@ -89,6 +91,7 @@ namespace Final_Game_Project
             bedroomRect = new Rectangle(-60, 0, 900, 600);
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
             introAnimationRect = new Rectangle(0, 0, 800, 600);
+            trainStationBackgroundRect = new Rectangle(-400, -600, 1500, 1300);
             //collisionRect = new Rectangle(60, 0, 10, 300);
             walking = false;
             animationNum = 0;
@@ -115,6 +118,7 @@ namespace Final_Game_Project
             mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");
             bedroomTexture = Content.Load<Texture2D>("bedroom");
             skyBackgroundTexture = Content.Load<Texture2D>("skyBackground");
+            trainStationBackgroundTexture = Content.Load<Texture2D>("trainStation");
             int width = mainCharacterSpritesheet.Width / 12;
             int height = mainCharacterSpritesheet.Height;
             for (int y = 0; y < 1; y++) 
@@ -138,7 +142,7 @@ namespace Final_Game_Project
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
             seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
-            this.Window.Title = seconds.ToString();
+            
             if (screen == Screen.Intro)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
@@ -161,13 +165,43 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                if (seconds >= 5)
+                if (seconds >= 0.2)
+                {
+                    startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    animationNum += 1;
+                }
+                if (animationNum >= 52)
                 {                   
-                    screen = Screen.House;
-                }              
+                    screen = Screen.TrainStation;
+                    startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
+                }
             }
-            else if (screen == Screen.House)
+            else if (screen == Screen.TrainStation)
             {
+                if (mainCharacterRect.Left <= -5)
+                {
+                    mainCharacterRect.X = -5;
+                    trainStationBackgroundRect.X += 5;
+                    if (trainStationBackgroundRect.Left <= 0)
+                    {
+                        trainStationBackgroundRect.X = 0;
+                    }        
+                }
+                
+                if (mainCharacterRect.Top <= -5)
+                {
+                    mainCharacterRect.Y = -5;
+                }
+                if (mainCharacterRect.Right >= 800)
+                {
+                    mainCharacterRect.X = 752;
+                }
+                if (mainCharacterRect.Bottom >= 605)
+                {
+                    mainCharacterRect.Y = 500;
+                }
+                   
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     up = true;
@@ -232,23 +266,20 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.OpeningAnimation)
             {
-                if (Math.Round(seconds) % 2 == 0)
+               
+                if (animationNum < 52)
                 {
-                    if (animationNum < 52)
-                    {
-                        _spriteBatch.Draw(introAnimation[animationNum], introAnimationRect, Color.White);
-                        animationNum += 1;
-                    }
-                    else if (animationNum == 52)
-                    {
-                        _spriteBatch.Draw(introAnimation[52], introAnimationRect, Color.White);
-                    }
-                } 
+                    _spriteBatch.Draw(introAnimation[animationNum], introAnimationRect, Color.White);
+                }
+                else if (animationNum == 52)
+                {
+                    _spriteBatch.Draw(introAnimation[52], introAnimationRect, Color.White);
+                }
+                
             }
-            else if (screen == Screen.House)
+            else if (screen == Screen.TrainStation)
             {
-                _spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
-                _spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
+                _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);
                 if (up)
                 {
                     _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
@@ -263,15 +294,12 @@ namespace Final_Game_Project
                 }
                 else if (down)
                 {
-                    if (walking)
-                    {
-                         _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
-                         _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);  
-                    }
-                    else
-                    {
-                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
-                    }
+                    _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
+                    //if (walking)
+                    //{
+                    //_spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                    //_spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);  
+                    //}
                 }
                 
 
@@ -284,6 +312,8 @@ namespace Final_Game_Project
 
     //To Do:
     //add collison rects
+    //_spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
+    //_spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
     
     
 }
