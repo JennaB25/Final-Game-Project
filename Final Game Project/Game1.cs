@@ -44,7 +44,9 @@ namespace Final_Game_Project
         Texture2D skyBackgroundTexture;
         Rectangle skyBackgroundRect;
         Rectangle introAnimationRect;
+        Rectangle trainAnimationRect;
         int animationNum;
+        int animation2Num;
         Texture2D trainStationBackgroundTexture;
         Rectangle trainStationBackgroundRect;
         //Rectangle collisionRect;
@@ -52,6 +54,7 @@ namespace Final_Game_Project
         float startTime;
 
         List<Texture2D> introAnimation;
+        List<Texture2D> trainAnimation;
 
         bool walking;      
         bool up;
@@ -77,6 +80,7 @@ namespace Final_Game_Project
             this.Window.Title = "Kovari Mail";
 
             introAnimation = new List<Texture2D>();
+            trainAnimation = new List<Texture2D>();
 
             screen = Screen.Intro;
             introScreenRect = new Rectangle(0, 0, 800, 600);
@@ -91,6 +95,7 @@ namespace Final_Game_Project
             bedroomRect = new Rectangle(-60, 0, 900, 600);
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
             introAnimationRect = new Rectangle(0, 0, 800, 600);
+            trainAnimationRect = new Rectangle(0, 0, 800, 600);
             trainStationBackgroundRect = new Rectangle(-400, -600, 1500, 1300);
             //collisionRect = new Rectangle(60, 0, 10, 300);
             walking = false;
@@ -106,6 +111,11 @@ namespace Final_Game_Project
             for (int i  = 0; i < 53; i++)
             {
                 introAnimation.Add(Content.Load<Texture2D>("IntroAnimation/animation " + i));
+            }
+
+            for (int i = 0; i < 41; i++)
+            {
+                trainAnimation.Add(Content.Load<Texture2D>("TrainAnimation/animation " + i));
             }
 
 
@@ -164,7 +174,7 @@ namespace Final_Game_Project
                     screen = Screen.Intro;                
             }
             else if (screen == Screen.OpeningAnimation)
-            {
+            {              
                 if (seconds >= 0.2)
                 {
                     startTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -178,28 +188,52 @@ namespace Final_Game_Project
                 }
             }
             else if (screen == Screen.TrainStation)
-            {
+            {                
+                if (seconds >= 0.2)
+                {
+                    startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    animation2Num += 1;
+                }
+                else if (animation2Num >= 41)
+                {                   
+                    startTime = (float)gameTime.TotalGameTime.TotalSeconds;               
+                }
                 if (mainCharacterRect.Left <= -5)
                 {
                     mainCharacterRect.X = -5;
-                    trainStationBackgroundRect.X += 5;
-                    if (trainStationBackgroundRect.Left <= 0)
+                    trainStationBackgroundRect.X += 2;
+                    if (trainStationBackgroundRect.Left >= 0)
                     {
                         trainStationBackgroundRect.X = 0;
-                    }        
-                }
-                
+                    }
+                }              
                 if (mainCharacterRect.Top <= -5)
                 {
                     mainCharacterRect.Y = -5;
-                }
+                    trainStationBackgroundRect.Y += 2;
+                    if (trainStationBackgroundRect.Top >= 0)
+                    {
+                        trainStationBackgroundRect.Y = 0;
+                    }                 
+                }              
                 if (mainCharacterRect.Right >= 800)
                 {
                     mainCharacterRect.X = 752;
+                    trainStationBackgroundRect.X -= 2;
+                    if (trainStationBackgroundRect.Right == 800)
+                    {
+                        //fix gliching movments on side if screen
+                        trainStationBackgroundRect.X = -695;
+                    }
                 }
                 if (mainCharacterRect.Bottom >= 605)
                 {
                     mainCharacterRect.Y = 500;
+                    trainStationBackgroundRect.Y -= 2;
+                    if (trainStationBackgroundRect.Bottom >= 600)
+                    {
+                        trainStationBackgroundRect.Y = -700;
+                    }
                 }
                    
                 if (keyboardState.IsKeyDown(Keys.Up))
@@ -265,8 +299,7 @@ namespace Final_Game_Project
                 _spriteBatch.DrawString(arcadeClassicFont, "P     Pause  Screen", new Vector2(200, 200), Color.Black);
             }
             else if (screen == Screen.OpeningAnimation)
-            {
-               
+            {              
                 if (animationNum < 52)
                 {
                     _spriteBatch.Draw(introAnimation[animationNum], introAnimationRect, Color.White);
@@ -278,7 +311,7 @@ namespace Final_Game_Project
                 
             }
             else if (screen == Screen.TrainStation)
-            {
+            {           
                 _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);
                 if (up)
                 {
@@ -300,6 +333,11 @@ namespace Final_Game_Project
                     //_spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
                     //_spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);  
                     //}
+                }
+
+                if (animation2Num < 41)
+                {
+                    _spriteBatch.Draw(trainAnimation[animation2Num], trainAnimationRect, Color.White);
                 }
                 
 
