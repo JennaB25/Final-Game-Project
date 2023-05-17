@@ -12,14 +12,16 @@ namespace Final_Game_Project
     internal class CollisionRectangle
     {
         private Texture2D _texture;
-        private Rectangle _location;
-        private int width;
-        private int height;
+        private Rectangle _location;         
+        int width;
+        int height;
 
-        public CollisionRectangle(Texture2D texture, int x, int y)
+        public CollisionRectangle(Texture2D texture, int x, int y, int width, int height)
         {
             _texture = texture;
-            _location = new Rectangle(x, y, width, height);           
+            _location = new Rectangle(x, y, width, height);
+            this.width = width;
+            this.height = height;
         }
         public void Draw(SpriteBatch spriteBatch)
         {

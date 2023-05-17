@@ -52,14 +52,15 @@ namespace Final_Game_Project
         Texture2D trainStationBackgroundTexture;
         Rectangle trainStationBackgroundRect;
         Texture2D rectangleTexture;
-        //CollisionRectangle rect1;
+        int rectDiffrence;
+        int walkingValue;
+        CollisionRectangle rect1;
         float seconds;
         float startTime;
 
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
-
-        bool walking;      
+            
         bool up;
         bool down;
         bool left;
@@ -100,12 +101,12 @@ namespace Final_Game_Project
             introAnimationRect = new Rectangle(0, 0, 800, 600);
             trainAnimationRect = new Rectangle(0, 0, 800, 600);
             trainStationBackgroundRect = new Rectangle(-400, -600, 1500, 1300);
-            backButtonCollisionRect = new Rectangle(745, 3, 50, 50);
-            walking = false;
+            backButtonCollisionRect = new Rectangle(745, 3, 50, 50);           
+            walkingValue = 1;
             animationNum = 0;
 
             base.Initialize();
-            //rect1 = new CollisionRectangle(rectangleTexture, 10, 10);
+            rect1 = new CollisionRectangle(rectangleTexture, 10, 10, 100, 100);        
         }
 
         protected override void LoadContent()
@@ -180,7 +181,7 @@ namespace Final_Game_Project
                         screen = Screen.Intro;                
             }
             else if (screen == Screen.OpeningAnimation)
-            {               
+            {              
                 if (seconds >= 0.2)
                 {
                     startTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -208,6 +209,7 @@ namespace Final_Game_Project
                 {
                     mainCharacterRect.X = 95;
                     trainStationBackgroundRect.X += 2;
+                    rectDiffrence += 2;
                     if (trainStationBackgroundRect.Left >= 0)
                     {
                         trainStationBackgroundRect.X = 0;
@@ -250,16 +252,17 @@ namespace Final_Game_Project
                     up = false;
                     down = true;
                 if (keyboardState.IsKeyDown(Keys.Down))
-                {
-                    down = true;
-                    walking = true;
-                    if (walking)
-                    {
-                        mainCharacterRect.Y += 2;
-                    }   
+                {                                                        
+                    if (seconds >= 0.2)
+                    {             
+                        walkingValue *= -1;
+                        startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    }
+                    mainCharacterRect.Y += 2;
                 }
-                else                   
-                    walking = false;
+                else
+                    down = true;
+                    walkingValue = 0;
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
                     right = true;
@@ -338,19 +341,19 @@ namespace Final_Game_Project
                 }
                 else if (down)
                 {
-                    _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
-                    if (walking)
-                    {
-                    _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
-                    _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);  
-                    }
+                    if (walkingValue == 1)
+                        _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                    else if (walkingValue == -1)
+                        _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
+                    else        
+                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
                 }
-
+                rect1.Draw(_spriteBatch);
                 if (animation2Num < 41)
                 {
                 _spriteBatch.Draw(trainAnimation[animation2Num], trainAnimationRect, Color.White);
-                }
-                
+                }              
+
             }
             _spriteBatch.End();
         
@@ -359,7 +362,10 @@ namespace Final_Game_Project
     }
 
     //To Do:
+    //fix collision rect class (location)
     //add collison rects
+    //make a player class
+    //fix walking animation for character
     //_spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
     //_spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
     
