@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 using System;
+using System.Threading;
 
 
 namespace Final_Game_Project
@@ -37,7 +38,7 @@ namespace Final_Game_Project
         Rectangle optionsButtonCollisionRect;
         Texture2D mainCharacterSpritesheet;
         List<Texture2D> mainCharacterTextures;
-        Rectangle mainCharacterRect;
+        Rectangle mainCharacterRect;       
         Texture2D cropTexture;
         Rectangle sourceRect;
         Texture2D bedroomTexture;
@@ -51,13 +52,12 @@ namespace Final_Game_Project
         int animation2Num;
         Texture2D trainStationBackgroundTexture;
         Rectangle trainStationBackgroundRect;
-        Texture2D rectangleTexture;
-        int rectDiffrence;
-        int walkingValue;
-        CollisionRectangle rect1;
+        Texture2D rectangleTexture;      
+        int walkingValue;      
         float seconds;
         float startTime;
 
+        List<Rectangle> collisionRects;
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
             
@@ -85,7 +85,8 @@ namespace Final_Game_Project
 
             introAnimation = new List<Texture2D>();
             trainAnimation = new List<Texture2D>();
-
+            collisionRects = new List<Rectangle>();
+            
             screen = Screen.Intro;
             introScreenRect = new Rectangle(0, 0, 800, 600);
             titleRect = new Rectangle(130, 100, 550, 100);
@@ -94,7 +95,7 @@ namespace Final_Game_Project
             paperBackgroundRect2 = new Rectangle(100, 50, 600, 500);           
             startButtonCollisionRect = new Rectangle(200, 320, 410, 70);
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
-            mainCharacterRect = new Rectangle(300, 300, 49, 105);
+            mainCharacterRect = new Rectangle(300, 300, 49, 105);            
             mainCharacterTextures = new List<Texture2D>();
             bedroomRect = new Rectangle(-60, 0, 900, 600);
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
@@ -105,8 +106,11 @@ namespace Final_Game_Project
             walkingValue = 1;
             animationNum = 0;
 
+            collisionRects.Add(new Rectangle(100, 100, 10, 200));
+            collisionRects.Add(new Rectangle(400, 400, 100, 10));
+
             base.Initialize();
-            rect1 = new CollisionRectangle(rectangleTexture, 10, 10, 100, 100);        
+                    
         }
 
         protected override void LoadContent()
@@ -154,7 +158,7 @@ namespace Final_Game_Project
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+                  
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
             seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
@@ -209,7 +213,9 @@ namespace Final_Game_Project
                 {
                     mainCharacterRect.X = 95;
                     trainStationBackgroundRect.X += 2;
-                    rectDiffrence += 2;
+                    //fix
+                    //foreach (Rectangle barrier in collisionRects)
+                        //barrier.X += 2;
                     if (trainStationBackgroundRect.Left >= 0)
                     {
                         trainStationBackgroundRect.X = 0;
@@ -242,7 +248,7 @@ namespace Final_Game_Project
                         trainStationBackgroundRect.Y = -700;
                     }
                 }
-                   
+                
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     up = true;
@@ -280,8 +286,23 @@ namespace Final_Game_Project
                     left = false;
                     down = true;
 
-            }
-                base.Update(gameTime);
+                
+
+                foreach (Rectangle barrier in collisionRects)
+                    if (mainCharacterRect.Intersects(barrier))
+                    {
+                        if (keyboardState.IsKeyDown(Keys.Up))
+                            mainCharacterRect.Y += 2;
+                        if (keyboardState.IsKeyDown(Keys.Down))
+                            mainCharacterRect.Y -= 2;
+                        if (keyboardState.IsKeyDown(Keys.Left))
+                            mainCharacterRect.X += 2;
+                        if (keyboardState.IsKeyDown(Keys.Right))
+                            mainCharacterRect.X -= 2;
+                    }
+
+            }           
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -325,30 +346,32 @@ namespace Final_Game_Project
                 
             }
             else if (screen == Screen.TrainStation)
-            {           
+            {
                 _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);
+                foreach (Rectangle barrier in collisionRects)
+                    _spriteBatch.Draw(rectangleTexture, barrier, Color.White);
                 if (up)
                 {
-                    _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
+                _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
                 }
                 else if (right)
                 {
-                    _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);
+                _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);
                 }
                 else if (left)
                 {
-                    _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);
+                _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);
                 }
                 else if (down)
                 {
-                    if (walkingValue == 1)
-                        _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
-                    else if (walkingValue == -1)
-                        _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
-                    else        
-                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
+                if (walkingValue == 1)
+                _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                else if (walkingValue == -1)
+                _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
+                else        
+                _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
                 }
-                rect1.Draw(_spriteBatch);
+                
                 if (animation2Num < 41)
                 {
                 _spriteBatch.Draw(trainAnimation[animation2Num], trainAnimationRect, Color.White);
@@ -365,9 +388,11 @@ namespace Final_Game_Project
     //fix collision rect class (location)
     //add collison rects
     //make a player class
+    //fix player moving to edge
     //fix walking animation for character
     //_spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
     //_spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
+   
     
     
 }
