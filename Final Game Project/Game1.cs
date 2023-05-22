@@ -267,8 +267,7 @@ namespace Final_Game_Project
                     mainCharacterRect.Y += 2;
                 }
                 else
-                    down = true;
-                    walkingValue = 0;
+                    down = true;                   
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
                     right = true;
@@ -364,12 +363,12 @@ namespace Final_Game_Project
                 }
                 else if (down)
                 {
-                if (walkingValue == 1)
-                _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
-                else if (walkingValue == -1)
-                _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
-                else        
-                _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
+                    if (walkingValue == 1)
+                        _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
+                    else if (walkingValue == -1)
+                        _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
+                    else        
+                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
                 }
                 
                 if (animation2Num < 41)
