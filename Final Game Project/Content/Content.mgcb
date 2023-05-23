@@ -16,6 +16,12 @@
 #begin ARCADECLASSIC[1].TTF
 /copy:ARCADECLASSIC[1].TTF
 
+#begin baseMusic.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:baseMusic.wav
+
 #begin bedroom.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -688,6 +694,12 @@
 /processorParam:TextureFormat=Color
 /build:IntroAnimation/animation 9.JPG
 
+#begin introAnimationSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:introAnimationSound.wav
+
 #begin introscreen.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -754,6 +766,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:skyBackground.png
+
+#begin spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:spritesheet.png
 
 #begin spritesheet.png
 /importer:TextureImporter
