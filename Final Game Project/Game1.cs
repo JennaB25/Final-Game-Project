@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
+using System.Threading;
 
 
 namespace Final_Game_Project
@@ -58,8 +59,7 @@ namespace Final_Game_Project
         SoundEffectInstance introAnimationSEI;
         SoundEffect baseMusic;
         SoundEffectInstance baseMusicSEI;
-
-        List<Rectangle> collisionRects;
+       
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
             
@@ -86,8 +86,7 @@ namespace Final_Game_Project
             this.Window.Title = "Kovari Mail";
 
             introAnimation = new List<Texture2D>();
-            trainAnimation = new List<Texture2D>();
-            collisionRects = new List<Rectangle>();
+            trainAnimation = new List<Texture2D>();           
             
             screen = Screen.Intro;
             introScreenRect = new Rectangle(0, 0, 800, 600);
@@ -97,7 +96,7 @@ namespace Final_Game_Project
             paperBackgroundRect2 = new Rectangle(100, 50, 600, 500);           
             startButtonCollisionRect = new Rectangle(200, 320, 410, 70);
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
-            mainCharacterRect = new Rectangle(300, 300, 49, 105);            
+            mainCharacterRect = new Rectangle(300, 300, 70, 120);            
             mainCharacterTextures = new List<Texture2D>();
             bedroomRect = new Rectangle(-60, 0, 900, 600);
             skyBackgroundRect = new Rectangle(0, 0, 800, 600);
@@ -107,12 +106,8 @@ namespace Final_Game_Project
             backButtonCollisionRect = new Rectangle(745, 3, 50, 50);           
             walkingValue = 1;
             animationNum = 0;
+            base.Initialize();           
 
-            collisionRects.Add(new Rectangle(100, 100, 10, 200));
-            collisionRects.Add(new Rectangle(400, 400, 100, 10));
-
-            base.Initialize();
-                    
         }
 
         protected override void LoadContent()
@@ -147,10 +142,10 @@ namespace Final_Game_Project
             baseMusic = Content.Load<SoundEffect>("baseMusic");
             baseMusicSEI = baseMusic.CreateInstance();
             baseMusicSEI.IsLooped = true;
-            int width = mainCharacterSpritesheet.Width / 12;
-            int height = mainCharacterSpritesheet.Height;
-            for (int y = 0; y < 1; y++) 
-                for (int x = 0; x < 12; x++) 
+            int width = mainCharacterSpritesheet.Width / 3;
+            int height = mainCharacterSpritesheet.Height / 4;
+            for (int y = 0; y < 4; y++) 
+                for (int x = 0; x < 3; x++) 
                 {
                     sourceRect = new Rectangle(x * width, y * height, width, height);
                     cropTexture = new Texture2D(GraphicsDevice, width, height);
@@ -195,7 +190,7 @@ namespace Final_Game_Project
                         screen = Screen.Intro;                
             }
             else if (screen == Screen.OpeningAnimation)
-            {               
+            {             
                 introAnimationSEI.Play();
                 if (seconds >= 0.2)
                 {
@@ -226,11 +221,6 @@ namespace Final_Game_Project
                 {
                     mainCharacterRect.X = 95;
                     trainStationBackgroundRect.X += 2;
-
-                    //for (int i = 0; i < collisionRects.Count; i++)
-                       // foreach (Rectangle barrier in collisionRects)
-                            //barrier(collisionRects[i]).X += 2;
-
                     if (trainStationBackgroundRect.Left >= 0)
                     {
                         trainStationBackgroundRect.X = 0;
@@ -247,7 +237,7 @@ namespace Final_Game_Project
                 }              
                 if (mainCharacterRect.Right >= 700 && Keyboard.GetState().IsKeyDown(Keys.Right))
                 {                  
-                    mainCharacterRect.X = 652;
+                    mainCharacterRect.X = 630;
                     trainStationBackgroundRect.X -= 2;
                     if (trainStationBackgroundRect.Right <= 800)
                     {                     
@@ -256,7 +246,7 @@ namespace Final_Game_Project
                 }
                 if (mainCharacterRect.Bottom >= 505 && Keyboard.GetState().IsKeyDown(Keys.Down))
                 {                  
-                    mainCharacterRect.Y = 400;
+                    mainCharacterRect.Y = 390;
                     trainStationBackgroundRect.Y -= 2;
                     if (trainStationBackgroundRect.Bottom <= 600)
                     {
@@ -314,22 +304,6 @@ namespace Final_Game_Project
                 else
                     left = false;
                     down = true;
-
-                
-
-                foreach (Rectangle barrier in collisionRects)
-                    if (mainCharacterRect.Intersects(barrier))
-                    {
-                        if (keyboardState.IsKeyDown(Keys.Up))
-                            mainCharacterRect.Y += 2;
-                        if (keyboardState.IsKeyDown(Keys.Down))
-                            mainCharacterRect.Y -= 2;
-                        if (keyboardState.IsKeyDown(Keys.Left))
-                            mainCharacterRect.X += 2;
-                        if (keyboardState.IsKeyDown(Keys.Right))
-                            mainCharacterRect.X -= 2;
-                    }
-
             }           
             base.Update(gameTime);
         }
@@ -376,36 +350,34 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.TrainStation)
             {
-                _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);
-                foreach (Rectangle barrier in collisionRects)
-                    _spriteBatch.Draw(rectangleTexture, barrier, Color.White);
+                _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);             
                 if (up)
-                {
-                    if (walkingValue == 1)
-                        _spriteBatch.Draw(mainCharacterTextures[4], mainCharacterRect, Color.White);
-                    else if (walkingValue == -1)
-                        _spriteBatch.Draw(mainCharacterTextures[5], mainCharacterRect, Color.White);
-                    else
-                        _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
-                    
-                }
-                else if (right)
-                {
+                {                 
                     if (walkingValue == 1)
                         _spriteBatch.Draw(mainCharacterTextures[7], mainCharacterRect, Color.White);
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[8], mainCharacterRect, Color.White);
                     else
-                        _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);                   
+                        _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);
+                    
                 }
-                else if (left)
+                else if (right)
                 {
                     if (walkingValue == 1)
                         _spriteBatch.Draw(mainCharacterTextures[10], mainCharacterRect, Color.White);
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[11], mainCharacterRect, Color.White);
                     else
-                        _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);   
+                        _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);                   
+                }
+                else if (left)
+                {
+                    if (walkingValue == 1)
+                        _spriteBatch.Draw(mainCharacterTextures[4], mainCharacterRect, Color.White);
+                    else if (walkingValue == -1)
+                        _spriteBatch.Draw(mainCharacterTextures[5], mainCharacterRect, Color.White);
+                    else
+                        _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);   
                 }
                 else if (down)
                 {
@@ -433,8 +405,7 @@ namespace Final_Game_Project
     //fix collision rect class (location)
     //add collison rects
     //make a player class
-    //fix player moving to edge
-    //fix walking animation for character
+    //fix player moving to edge  
     //_spriteBatch.Draw(skyBackgroundTexture, skyBackgroundRect, Color.White);
     //_spriteBatch.Draw(bedroomTexture, bedroomRect, Color.White);
    
