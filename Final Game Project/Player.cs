@@ -8,17 +8,41 @@ using System.Threading.Tasks;
 
 namespace Final_Game_Project
 {
-    internal class Player
+    internal class CollisionRect
     {
         private Texture2D _texture;
         private Rectangle _location;
         private Vector2 _speed;
+        private int width;
+        private int height;
 
-        public Player(Texture2D texture, int x, int y)
+        public CollisionRect(Texture2D texture, int x, int y)
         {
             _texture = texture;
-            _location = new Rectangle(x, y, 59, 115);
+            _location = new Rectangle(x, y, width, height);
             _speed = new Vector2();
+
+            
+        }
+        public float Width
+        {
+            get { return _location.Width; }
+            set { _location.Width = (int)value; }
+        }
+        public float Height
+        {
+            get { return _location.Height; }
+            set { _location.Height = (int)value; }
+        }
+        public float X
+        {
+            get { return _location.X; }
+            set { _location.X = (int)value; }
+        }
+        public float Y
+        {
+            get { return _location.Y; }
+            set {_location.Y = (int)value;}
         }
         public float HSpeed
         {
@@ -29,6 +53,10 @@ namespace Final_Game_Project
         {
             get { return _speed.Y; }
             set { _speed.Y = value; }
+        }
+        public bool Collide(Rectangle item)
+        {
+            return _location.Intersects(item);
         }
         private void Move()
         {
