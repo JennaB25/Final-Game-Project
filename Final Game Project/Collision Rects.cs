@@ -22,7 +22,7 @@ namespace Final_Game_Project
             _location = new Rectangle(x, y, width, height);
             _speed = new Vector2();
 
-            
+
         }
         public float Width
         {
@@ -42,7 +42,7 @@ namespace Final_Game_Project
         public float Y
         {
             get { return _location.Y; }
-            set {_location.Y = (int)value;}
+            set { _location.Y = (int)value; }
         }
         public float HSpeed
         {
@@ -73,3 +73,4 @@ namespace Final_Game_Project
         }
     }
 }
+
