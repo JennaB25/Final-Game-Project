@@ -202,7 +202,7 @@ namespace Final_Game_Project
             else if (screen == Screen.OpeningAnimation)
             {              
                 introAnimationSEI.Play();
-                if (seconds >= 0.2)
+                if (seconds >= 0.4)
                 {
                     startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     animationNum += 1;
@@ -217,7 +217,7 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.TrainStation)
             {
-                //baseMusic.Play();
+                baseMusicSEI.Play();
                 if (seconds >= 0.2)
                 {
                     startTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -358,9 +358,10 @@ namespace Final_Game_Project
                 if (keyboardState.IsKeyDown(Keys.Right))
                     mainCharacterRect.X -= 2;
             }
-            
-               
-                rect1.Update();
+
+            rect1.Update();
+            rect2.Update();
+                
             base.Update(gameTime);
         }
 
@@ -470,8 +471,7 @@ namespace Final_Game_Project
 
     //To Do:   
     //add collison rects
-    //make a class for diffrent quests
-    //fix song for train animation
+    //make a class for diffrent quests  
     //fix player moving to edge  
    
     
