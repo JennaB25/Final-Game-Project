@@ -15,6 +15,7 @@ namespace Final_Game_Project
             Options,
             OpeningAnimation,
             TrainStation,
+            Town,
             End
         }
         Screen screen;
@@ -61,7 +62,13 @@ namespace Final_Game_Project
         SoundEffectInstance baseMusicSEI;
         CollisionRect rect1;
         CollisionRect rect2;
-       
+        CollisionRect rect3;
+        Texture2D interactButtonTexture;
+        Rectangle interactButtonRect;
+        bool sideCharcterProximity;
+        Texture2D townBackgroundTexture;
+        Rectangle townBackgroundRect;
+
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
             
@@ -107,16 +114,22 @@ namespace Final_Game_Project
             trainStationCharacterRect = new Rectangle(650, 270, 40, 80);
             bubbleRect = new Rectangle(660, 230, 100, 60);
             textLocation = new Vector2(670, 245);
+            interactButtonRect = new Rectangle(100, 100, 50, 50);
+            townBackgroundRect = new Rectangle(-400, -600, 1500, 1300);
             walkingValue = 1;
             animationNum = 0;
+            sideCharcterProximity = false;
             base.Initialize();
 
             rect1 = new CollisionRect(rectangleTexture, 46, 418);
             rect2 = new CollisionRect(rectangleTexture, 582, 403);
+            rect3 = new CollisionRect(rectangleTexture, 50, 104);
             rect1.Width = 441;
             rect1.Height = 100;
             rect2.Width = 168;
             rect2.Height = 50;
+            rect3.Width = 610;
+            rect3.Height = 143;
         }
 
         protected override void LoadContent()
@@ -147,6 +160,8 @@ namespace Final_Game_Project
             introAnimationSound = Content.Load<SoundEffect>("introAnimationSound");
             trainStationCharacterTexture = Content.Load<Texture2D>("trainStationCharcter");
             bubbleTexture = Content.Load<Texture2D>("bubble");
+            interactButtonTexture = Content.Load<Texture2D>("interactButton");
+            townBackgroundTexture = Content.Load<Texture2D>("villageMap");
             introAnimationSEI = introAnimationSound.CreateInstance();
             introAnimationSEI.IsLooped = false;
             baseMusic = Content.Load<SoundEffect>("baseMusic");
@@ -175,7 +190,7 @@ namespace Final_Game_Project
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
             seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
-            
+
             if (screen == Screen.Intro)
             {
                 baseMusicSEI.Play();
@@ -197,10 +212,10 @@ namespace Final_Game_Project
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
                     if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                        screen = Screen.Intro;                
+                        screen = Screen.Intro;
             }
             else if (screen == Screen.OpeningAnimation)
-            {              
+            {           
                 introAnimationSEI.Play();
                 if (seconds >= 0.4)
                 {
@@ -229,21 +244,22 @@ namespace Final_Game_Project
                 }                
                 if (mainCharacterRect.Left <= 95 && Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
-                    mainCharacterRect.X = 95;
                     trainStationBackgroundRect.X += 2;
+                    mainCharacterRect.X = 95;
                     if (trainStationBackgroundRect.Left <= 0)
                     {
                         rect1.X += 2;
                         rect2.X += 2;
+                        rect3.X += 2;
                         trainStationCharacterRect.X += 2;
                         bubbleRect.X += 2;
                         textLocation.X += 2;
                     }
                     else if (trainStationBackgroundRect.Left >= 0)
                     {
-                        trainStationBackgroundRect.X = 0;                       
+                        trainStationBackgroundRect.X = 0;
                     }
-                }              
+                }
                 if (mainCharacterRect.Top <= 95 && Keyboard.GetState().IsKeyDown(Keys.Up))
                 {
                     mainCharacterRect.Y = 95;
@@ -252,6 +268,7 @@ namespace Final_Game_Project
                     {
                         rect1.Y += 2;
                         rect2.Y += 2;
+                        rect3.Y += 2;
                         trainStationCharacterRect.Y += 2;
                         bubbleRect.Y += 2;
                         textLocation.Y += 2;
@@ -259,10 +276,10 @@ namespace Final_Game_Project
                     else if (trainStationBackgroundRect.Top >= 0)
                     {
                         trainStationBackgroundRect.Y = 0;
-                    }                 
-                }              
+                    }
+                }
                 if (mainCharacterRect.Right >= 700 && Keyboard.GetState().IsKeyDown(Keys.Right))
-                {                  
+                {                   
                     mainCharacterRect.X = 660;
                     trainStationBackgroundRect.X -= 2;
                     if (trainStationBackgroundRect.Right <= 800)
@@ -273,15 +290,16 @@ namespace Final_Game_Project
                     {
                         rect1.X -= 2;
                         rect2.X -= 2;
+                        rect3.X -= 2;
                         trainStationCharacterRect.X -= 2;
                         bubbleRect.X -= 2;
                         textLocation.X -= 2;
-                    }                  
+                    }
                 }
                 if (mainCharacterRect.Bottom >= 505 && Keyboard.GetState().IsKeyDown(Keys.Down))
-                {                  
+                {
                     mainCharacterRect.Y = 425;
-                    trainStationBackgroundRect.Y -= 2;                  
+                    trainStationBackgroundRect.Y -= 2;
                     if (trainStationBackgroundRect.Bottom <= 600)
                     {
                         trainStationBackgroundRect.Y = -700;
@@ -290,12 +308,13 @@ namespace Final_Game_Project
                     {
                         rect1.Y -= 2;
                         rect2.Y -= 2;
+                        rect3.Y -= 2;
                         trainStationCharacterRect.Y -= 2;
                         bubbleRect.Y -= 2;
                         textLocation.Y -= 2;
                     }
                 }
-                
+
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     up = true;
@@ -308,18 +327,18 @@ namespace Final_Game_Project
                 }
                 else
                     up = false;
-                    down = true;
+                down = true;
                 if (keyboardState.IsKeyDown(Keys.Down))
-                {                    
+                {
                     if (seconds >= 0.2)
-                    {                      
+                    {
                         walkingValue *= -1;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     mainCharacterRect.Y += 2;
                 }
                 else
-                    down = true;                   
+                    down = true;
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
                     right = true;
@@ -328,11 +347,11 @@ namespace Final_Game_Project
                         walkingValue *= -1;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
-                    mainCharacterRect.X += 2;                 
+                    mainCharacterRect.X += 2;
                 }
                 else
                     right = false;
-                    down = true;
+                down = true;
                 if (keyboardState.IsKeyDown(Keys.Left))
                 {
                     left = true;
@@ -341,35 +360,39 @@ namespace Final_Game_Project
                         walkingValue *= -1;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
-                    mainCharacterRect.X -= 2;                 
+                    mainCharacterRect.X -= 2;
                 }
                 else
                     left = false;
-                    down = true;
-            }
-            if (rect1.Collide(mainCharacterRect) || rect2.Collide(mainCharacterRect))
-            {
-                if (keyboardState.IsKeyDown(Keys.Up))
-                    mainCharacterRect.Y += 2;
-                if (keyboardState.IsKeyDown(Keys.Down))
-                    mainCharacterRect.Y -= 2;
-                if (keyboardState.IsKeyDown(Keys.Left))
-                    mainCharacterRect.X += 2;
-                if (keyboardState.IsKeyDown(Keys.Right))
-                    mainCharacterRect.X -= 2;
-            }
+                down = true;
 
-            rect1.Update();
-            rect2.Update();
-                
-            base.Update(gameTime);
+                if (rect1.Collide(mainCharacterRect) || rect2.Collide(mainCharacterRect))
+                {
+                    if (keyboardState.IsKeyDown(Keys.Up))
+                        mainCharacterRect.Y += 2;
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                        mainCharacterRect.Y -= 2;
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                        mainCharacterRect.X += 2;
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                        mainCharacterRect.X -= 2;
+                }
+                //fix
+                //if (trainStationCharacterRect.Contains(mainCharacterRect))
+                //sideCharcterProximity = true;
+            }
+            else if (screen == Screen.Town)
+            {
+
+            }   
+                base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.LightBlue);
 
-            _spriteBatch.Begin();          
+            _spriteBatch.Begin();
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(introScreenTexture, introScreenRect, Color.White);
@@ -394,7 +417,7 @@ namespace Final_Game_Project
                 _spriteBatch.DrawString(arcadeClassicFont, "I     Interact", new Vector2(200, 400), Color.Black);
             }
             else if (screen == Screen.OpeningAnimation)
-            {              
+            {
                 if (animationNum < 52)
                 {
                     _spriteBatch.Draw(introAnimation[animationNum], introAnimationRect, Color.White);
@@ -403,13 +426,14 @@ namespace Final_Game_Project
                 {
                     _spriteBatch.Draw(introAnimation[52], introAnimationRect, Color.White);
                 }
-                
+
             }
             else if (screen == Screen.TrainStation)
             {
                 //Rects
                 rect1.Draw(_spriteBatch);
                 rect2.Draw(_spriteBatch);
+                rect3.Draw(_spriteBatch);
                 //
                 _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);
                 _spriteBatch.Draw(trainStationCharacterTexture, trainStationCharacterRect, Color.White);
@@ -417,17 +441,20 @@ namespace Final_Game_Project
                 {
                     _spriteBatch.Draw(bubbleTexture, bubbleRect, Color.White);
                     _spriteBatch.DrawString(textFont, "Hey over here!", textLocation, Color.Black);
-                }             
-
+                }
+                if (sideCharcterProximity)
+                {
+                    _spriteBatch.Draw(interactButtonTexture, interactButtonRect, Color.White);
+                }
                 if (up)
-                {                 
+                {
                     if (walkingValue == 1)
                         _spriteBatch.Draw(mainCharacterTextures[7], mainCharacterRect, Color.White);
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[8], mainCharacterRect, Color.White);
                     else
                         _spriteBatch.Draw(mainCharacterTextures[6], mainCharacterRect, Color.White);
-                    
+
                 }
                 else if (right)
                 {
@@ -436,7 +463,7 @@ namespace Final_Game_Project
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[11], mainCharacterRect, Color.White);
                     else
-                        _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);                   
+                        _spriteBatch.Draw(mainCharacterTextures[9], mainCharacterRect, Color.White);
                 }
                 else if (left)
                 {
@@ -445,7 +472,7 @@ namespace Final_Game_Project
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[5], mainCharacterRect, Color.White);
                     else
-                        _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);   
+                        _spriteBatch.Draw(mainCharacterTextures[3], mainCharacterRect, Color.White);
                 }
                 else if (down)
                 {
@@ -453,17 +480,22 @@ namespace Final_Game_Project
                         _spriteBatch.Draw(mainCharacterTextures[1], mainCharacterRect, Color.White);
                     else if (walkingValue == -1)
                         _spriteBatch.Draw(mainCharacterTextures[2], mainCharacterRect, Color.White);
-                    else        
-                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);                 
+                    else
+                        _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
                 }
-                
+
                 if (animation2Num < 41)
                 {
                 _spriteBatch.Draw(trainAnimation[animation2Num], trainAnimationRect, Color.White);
                 }              
 
             }
-            _spriteBatch.End();
+            else if (screen == Screen.TrainStation)
+            {
+                _spriteBatch.Draw(townBackgroundTexture, townBackgroundRect, Color.White);
+            }
+
+                _spriteBatch.End();
         
             base.Draw(gameTime);           
         }

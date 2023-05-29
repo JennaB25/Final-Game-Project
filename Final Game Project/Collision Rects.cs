@@ -21,8 +21,6 @@ namespace Final_Game_Project
             _texture = texture;
             _location = new Rectangle(x, y, width, height);
             _speed = new Vector2();
-
-
         }
         public float Width
         {
