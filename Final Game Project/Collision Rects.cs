@@ -16,7 +16,7 @@ namespace Final_Game_Project
         private int width;
         private int height;
 
-        public CollisionRect(Texture2D texture, int x, int y)
+        public CollisionRect(Texture2D texture, int x, int y, int width, int height)
         {
             _texture = texture;
             _location = new Rectangle(x, y, width, height);
