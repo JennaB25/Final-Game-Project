@@ -52,7 +52,7 @@ namespace Final_Game_Project
         Texture2D bubbleTexture;
         Rectangle bubbleRect;
         Texture2D rectangleTexture;
-        Vector2 textLocation;
+        Vector2 textLocation;        
         int walkingValue;      
         float seconds;
         float startTime;
@@ -66,6 +66,7 @@ namespace Final_Game_Project
         Texture2D interactButtonTexture;
         Rectangle interactButtonRect;
         bool sideCharcterProximity;
+        bool sideCharcterText;
         Texture2D townBackgroundTexture;
         Rectangle townBackgroundRect;
 
@@ -113,12 +114,13 @@ namespace Final_Game_Project
             backButtonCollisionRect = new Rectangle(745, 3, 50, 50); 
             trainStationCharacterRect = new Rectangle(650, 270, 40, 80);
             bubbleRect = new Rectangle(660, 230, 100, 60);
-            textLocation = new Vector2(670, 245);
-            interactButtonRect = new Rectangle(0, 0, 25, 25);
+            textLocation = new Vector2(670, 245);           
+            interactButtonRect = new Rectangle(0, 0, 20, 20);
             townBackgroundRect = new Rectangle(-800, -1500, 2500, 2300);
             walkingValue = 1;
             animationNum = 0;
             sideCharcterProximity = false;
+            sideCharcterText = false;
             base.Initialize();
 
             rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
@@ -312,7 +314,7 @@ namespace Final_Game_Project
                         textLocation.Y -= 2;
                     }
                 }
-
+                //Side Train Station Charcter//
                 if (trainStationCharacterRect.Intersects(mainCharacterRect))        
                     sideCharcterProximity = true;
                 else
@@ -320,6 +322,10 @@ namespace Final_Game_Project
                 interactButtonRect.X = mainCharacterRect.X + 25;
                 interactButtonRect.Y = mainCharacterRect.Y - 25;
 
+                if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
+                    sideCharcterText = true;
+
+                //---------------------------//
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     up = true;
@@ -482,11 +488,11 @@ namespace Final_Game_Project
             }
             else if (screen == Screen.TrainStation)
             {
-                //Rects
+                //Rects//
                 rect1.Draw(_spriteBatch);
                 rect2.Draw(_spriteBatch);
                 rect3.Draw(_spriteBatch);
-                //
+                //----//
                 _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);               
                 _spriteBatch.Draw(trainStationCharacterTexture, trainStationCharacterRect, Color.White);
                 if (seconds < 1)
@@ -497,7 +503,7 @@ namespace Final_Game_Project
                 if (sideCharcterProximity)
                 {
                     _spriteBatch.Draw(interactButtonTexture, interactButtonRect, Color.White);
-                }
+                }      
                 if (up)
                 {
                     if (walkingValue == 1)
@@ -535,7 +541,15 @@ namespace Final_Game_Project
                     else
                         _spriteBatch.Draw(mainCharacterTextures[0], mainCharacterRect, Color.White);
                 }
-
+                if (sideCharcterText)
+                {
+                    _spriteBatch.Draw(paperBackgroundTexture, paperBackgroundRect2, Color.White);
+                    _spriteBatch.DrawString(textFont, "Hi, my name is Max. I'm supposed to pick you up. So I hear you're gonna", new Vector2(200, 150), Color.Black);
+                    _spriteBatch.DrawString(textFont, "be taking over the local mail delivery buissness. You have pretty big", new Vector2(200, 170), Color.Black);
+                    _spriteBatch.DrawString(textFont, "shoes to fill, let me tell you. The first guy had been doing it for 50", new Vector2(200, 190), Color.Black);
+                    _spriteBatch.DrawString(textFont, "years. That's until he went missing--I mean he went into retirement.", new Vector2(200, 210), Color.Black);
+                    _spriteBatch.DrawString(textFont, "(...)", new Vector2(200, 210), Color.Black);
+                }
                 //if (animation2Num < 41)
                 //{
                 //_spriteBatch.Draw(trainAnimation[animation2Num], trainAnimationRect, Color.White);
@@ -594,6 +608,7 @@ namespace Final_Game_Project
     //add collison rects
     //make a class for diffrent quests  
     //fix player moving to edge  
+    //change base music
    
     
     
