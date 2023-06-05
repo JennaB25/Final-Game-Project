@@ -12,7 +12,7 @@ namespace Final_Game_Project
     {
         private Texture2D _texture;
         private Rectangle _location;
-        private Vector2 _speed;
+        public static Vector2 _speed;
         private int width;
         private int height;
 
@@ -56,15 +56,21 @@ namespace Final_Game_Project
         {
             return _location.Intersects(item);
         }
-        private void Move()
+
+        public void Move()
         {
-            _location.X += (int)_speed.X;
-            _location.Y += (int)_speed.Y;
+            _location.Offset(CollisionRect._speed);
         }
-        public void Update()
+
+        public void UndoMove()
         {
-            Move();
+            _location.X -= (int)CollisionRect._speed.X;
+            _location.Y -= (int)CollisionRect._speed.Y;
         }
+        //public void Update()
+        //{
+        //    Move();
+        //}
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, _location, Color.White);

@@ -60,6 +60,7 @@ namespace Final_Game_Project
         SoundEffectInstance introAnimationSEI;
         SoundEffect baseMusic;
         SoundEffectInstance baseMusicSEI;
+        List<CollisionRect> barriers;
         CollisionRect rect1;
         CollisionRect rect2;
         CollisionRect rect3;
@@ -69,6 +70,7 @@ namespace Final_Game_Project
         bool sideCharcterText;
         Texture2D townBackgroundTexture;
         Rectangle townBackgroundRect;
+        Rectangle paperBackgroundRect3;
 
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
@@ -116,16 +118,21 @@ namespace Final_Game_Project
             bubbleRect = new Rectangle(660, 230, 100, 60);
             textLocation = new Vector2(670, 245);           
             interactButtonRect = new Rectangle(0, 0, 20, 20);
-            townBackgroundRect = new Rectangle(-800, -1500, 2500, 2300);
+            townBackgroundRect = new Rectangle(0, -1500, 2500, 2300);
+            paperBackgroundRect3 = new Rectangle(100, 50, 600, 300);
             walkingValue = 1;
             animationNum = 0;
             sideCharcterProximity = false;
             sideCharcterText = false;
             base.Initialize();
+            barriers = new List<CollisionRect>();
+            barriers.Add(new CollisionRect(rectangleTexture, 46, 418, 441, 100));
+            barriers.Add(new CollisionRect(rectangleTexture, 582, 403, 168, 50));
+            barriers.Add(new CollisionRect(rectangleTexture, 50, 104, 610, 143));
 
-            rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
-            rect2 = new CollisionRect(rectangleTexture, 582, 403, 168, 50);
-            rect3 = new CollisionRect(rectangleTexture, 50, 104, 610, 143);                               
+            //rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
+            //rect2 = new CollisionRect(rectangleTexture, 582, 403, 168, 50);
+            //rect3 = new CollisionRect(rectangleTexture, 50, 104, 610, 143);                               
         }
 
         protected override void LoadContent()
@@ -194,7 +201,7 @@ namespace Final_Game_Project
                 {
                     if (startButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
-                        baseMusicSEI.Stop();
+                        baseMusicSEI.Stop();                       
                         screen = Screen.OpeningAnimation;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
@@ -234,22 +241,24 @@ namespace Final_Game_Project
                 baseMusicSEI.Play();
                 //if (seconds >= 0.2)
                 //{
-                    //startTime = (float)gameTime.TotalGameTime.TotalSeconds;
-                    //animation2Num += 1;
+                //startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                //animation2Num += 1;
                 //}
                 //else if (animation2Num >= 41)
                 //{                   
-                    //               
-                //}                
+                //               
+                //}
+                CollisionRect._speed = new Vector2();
                 if (mainCharacterRect.Left <= 95 && Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
                     trainStationBackgroundRect.X += 2;
                     mainCharacterRect.X = 95;
                     if (trainStationBackgroundRect.Left <= 0)
                     {
-                        rect1.X += 2;
-                        rect2.X += 2;
-                        rect3.X += 2;
+                        CollisionRect._speed.X = 2;
+                        //rect1.X += 2;
+                        //rect2.X += 2;
+                        //rect3.X += 2;
                         trainStationCharacterRect.X += 2;
                         bubbleRect.X += 2;
                         textLocation.X += 2;
@@ -265,9 +274,7 @@ namespace Final_Game_Project
                     trainStationBackgroundRect.Y += 2;
                     if (trainStationBackgroundRect.Top <= 0)
                     {
-                        rect1.Y += 2;
-                        rect2.Y += 2;
-                        rect3.Y += 2;
+                        CollisionRect._speed.Y = 2;
                         trainStationCharacterRect.Y += 2;
                         bubbleRect.Y += 2;
                         textLocation.Y += 2;
@@ -285,12 +292,12 @@ namespace Final_Game_Project
                     {
                         trainStationBackgroundRect.X = -700;
                         screen = Screen.Town;
+                        mainCharacterRect.X = 50;
+                        mainCharacterRect.Y = 400;
                     }
                     else if (trainStationBackgroundRect.Right >= 0)
                     {
-                        rect1.X -= 2;
-                        rect2.X -= 2;
-                        rect3.X -= 2;
+                        CollisionRect._speed.X = -2;
                         trainStationCharacterRect.X -= 2;
                         bubbleRect.X -= 2;
                         textLocation.X -= 2;
@@ -306,24 +313,30 @@ namespace Final_Game_Project
                     }
                     else if (trainStationBackgroundRect.Bottom >= 0)
                     {
-                        rect1.Y -= 2;
-                        rect2.Y -= 2;
-                        rect3.Y -= 2;
+                        CollisionRect._speed.Y = -2;
+                        //rect1.Y -= 2;
+                        //rect2.Y -= 2;
+                        //rect3.Y -= 2;
                         trainStationCharacterRect.Y -= 2;
                         bubbleRect.Y -= 2;
                         textLocation.Y -= 2;
                     }
                 }
+                foreach (CollisionRect barrier in barriers)
+                    barrier.Move();
                 //Side Train Station Charcter//
-                if (trainStationCharacterRect.Intersects(mainCharacterRect))        
+                if (trainStationCharacterRect.Intersects(mainCharacterRect))
                     sideCharcterProximity = true;
                 else
                     sideCharcterProximity = false;
                 interactButtonRect.X = mainCharacterRect.X + 25;
                 interactButtonRect.Y = mainCharacterRect.Y - 25;
 
-                if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
-                    sideCharcterText = true;
+                if (keyboardState.IsKeyDown(Keys.I))
+                   if (sideCharcterProximity)
+                        sideCharcterText = true;
+                    else if (sideCharcterText)
+                        sideCharcterText = false;
 
                 //---------------------------//
                 if (keyboardState.IsKeyDown(Keys.Up))
@@ -377,21 +390,46 @@ namespace Final_Game_Project
                     left = false;
                 down = true;
 
-                if (rect1.Collide(mainCharacterRect) || rect2.Collide(mainCharacterRect) || rect3.Collide(mainCharacterRect))
+
+                foreach (CollisionRect barrier in barriers)
                 {
-                    if (keyboardState.IsKeyDown(Keys.Up))
-                        mainCharacterRect.Y += 2;
-                    if (keyboardState.IsKeyDown(Keys.Down))
-                        mainCharacterRect.Y -= 2;
-                    if (keyboardState.IsKeyDown(Keys.Left))
-                        mainCharacterRect.X += 2;
-                    if (keyboardState.IsKeyDown(Keys.Right))
-                        mainCharacterRect.X -= 2;
+                    if (barrier.Collide(mainCharacterRect))
+                    {
+                        if (keyboardState.IsKeyDown(Keys.Up))
+                            mainCharacterRect.Y += 2;
+                        if (keyboardState.IsKeyDown(Keys.Down))
+                            mainCharacterRect.Y -= 2;
+                        if (keyboardState.IsKeyDown(Keys.Left))
+                            mainCharacterRect.X += 2;
+                        if (keyboardState.IsKeyDown(Keys.Right))
+                            mainCharacterRect.X -= 2;
+                    }
                 }
+                //if (rect1.Collide(mainCharacterRect) || rect2.Collide(mainCharacterRect) || rect3.Collide(mainCharacterRect))
+                //{
+                //    if (keyboardState.IsKeyDown(Keys.Up))
+                //        mainCharacterRect.Y += 2;
+                //    if (keyboardState.IsKeyDown(Keys.Down))
+                //        mainCharacterRect.Y -= 2;
+                //    if (keyboardState.IsKeyDown(Keys.Left))
+                //        mainCharacterRect.X += 2;
+                //    if (keyboardState.IsKeyDown(Keys.Right))
+                //        mainCharacterRect.X -= 2;
+                //}
                
             }
             else if (screen == Screen.Town)
             {
+                //animation2Num = 0;
+                //if (seconds >= 0.2)
+                //{
+                    //startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    //animation2Num += 1;
+                //}
+                //else if (animation2Num >= 17)
+                //{                   
+                    //               
+                //} 
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
                     up = true;
@@ -489,9 +527,11 @@ namespace Final_Game_Project
             else if (screen == Screen.TrainStation)
             {
                 //Rects//
-                rect1.Draw(_spriteBatch);
-                rect2.Draw(_spriteBatch);
-                rect3.Draw(_spriteBatch);
+                foreach (CollisionRect barrier in barriers)
+                    barrier.Draw(_spriteBatch);
+                //rect1.Draw(_spriteBatch);
+                //rect2.Draw(_spriteBatch);
+                //rect3.Draw(_spriteBatch);
                 //----//
                 _spriteBatch.Draw(trainStationBackgroundTexture, trainStationBackgroundRect, Color.White);               
                 _spriteBatch.Draw(trainStationCharacterTexture, trainStationCharacterRect, Color.White);
@@ -543,12 +583,12 @@ namespace Final_Game_Project
                 }
                 if (sideCharcterText)
                 {
-                    _spriteBatch.Draw(paperBackgroundTexture, paperBackgroundRect2, Color.White);
+                    _spriteBatch.Draw(paperBackgroundTexture, paperBackgroundRect3, Color.White);
                     _spriteBatch.DrawString(textFont, "Hi, my name is Max. I'm supposed to pick you up. So I hear you're gonna", new Vector2(200, 150), Color.Black);
                     _spriteBatch.DrawString(textFont, "be taking over the local mail delivery buissness. You have pretty big", new Vector2(200, 170), Color.Black);
-                    _spriteBatch.DrawString(textFont, "shoes to fill, let me tell you. The first guy had been doing it for 50", new Vector2(200, 190), Color.Black);
-                    _spriteBatch.DrawString(textFont, "years. That's until he went missing--I mean he went into retirement.", new Vector2(200, 210), Color.Black);
-                    _spriteBatch.DrawString(textFont, "(...)", new Vector2(200, 210), Color.Black);
+                    _spriteBatch.DrawString(textFont, "shoes to fill, let me tell you. The first guy had been doing it for over", new Vector2(200, 190), Color.Black);
+                    _spriteBatch.DrawString(textFont, "50 years. That's until he went missing--I mean he went into retirement.", new Vector2(200, 210), Color.Black);
+                    _spriteBatch.DrawString(textFont, "Anyways head down to the right into town and I'll meet you there.", new Vector2(200, 230), Color.Black);
                 }
                 //if (animation2Num < 41)
                 //{

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Final_Game_Project
 {
-    internal class Quest1
+    public class Quest1
     {
         //
     }
