@@ -112,7 +112,7 @@ namespace Final_Game_Project
             titleRect = new Rectangle(130, 100, 550, 100);
             paperBackgroundRect = new Rectangle(130, 250, 550, 300);
             optionsBackgroundRect = new Rectangle(0, 0, 800, 600);
-            paperBackgroundRect2 = new Rectangle(100, 50, 600, 500);
+            paperBackgroundRect2 = new Rectangle(100, 50, 600, 550);
             startButtonCollisionRect = new Rectangle(200, 320, 410, 70);
             optionsButtonCollisionRect = new Rectangle(200, 400, 410, 70);
             mainCharacterRect = new Rectangle(300, 300, 40, 80);
@@ -455,15 +455,15 @@ namespace Final_Game_Project
                     {
                         //               
                     }
-                    CollisionRect._speed = new Vector2();
-                    //mainCharacterRect.Left <= 95 && 
+                    CollisionRect._speed = new Vector2();                
                     if (Keyboard.GetState().IsKeyDown(Keys.Left))
                     {
                         townBackgroundRect.X += 2;
-                        townTopLayerRect.X += 2;
-                        //mainCharacterRect.X = 95;
+                        townTopLayerRect.X += 2;                       
                         if (townBackgroundRect.Left <= 0)
                         {
+                            if (mainCharacterRect.X <= 200)
+                                mainCharacterRect.X = 200;
                             CollisionRect._speed.X = 2;
                             trainStationCharacterRect2.X += 2;
                         }
@@ -474,15 +474,15 @@ namespace Final_Game_Project
                             if (mainCharacterRect.Left <= 0)
                                 mainCharacterRect.X = 0;
                         }
-                    }
-                    //mainCharacterRect.Top <= 95 && 
+                    }                    
                     if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                    {
-                        //mainCharacterRect.Y = 95;
+                    {                      
                         townBackgroundRect.Y += 2;
                         townTopLayerRect.Y += 2;
                         if (townBackgroundRect.Top <= 0)
                         {
+                            if (mainCharacterRect.Y <= 200)
+                                mainCharacterRect.Y = 200;
                             CollisionRect._speed.Y = 2;
                             trainStationCharacterRect2.Y += 2;
                         }
@@ -494,34 +494,40 @@ namespace Final_Game_Project
                                 mainCharacterRect.Y = 0;
                         }
                     }
-                    if (mainCharacterRect.Right >= 700 && Keyboard.GetState().IsKeyDown(Keys.Right))
+                    if (Keyboard.GetState().IsKeyDown(Keys.Right))
                     {
-                        mainCharacterRect.X = 660;
                         townBackgroundRect.X -= 2;
                         townTopLayerRect.X -= 2;
                         if (townBackgroundRect.Right <= 800)
                         {
                             townBackgroundRect.X = -1700;
                             townTopLayerRect.X = -1700;
+                            if (mainCharacterRect.Right >= 800)
+                                mainCharacterRect.X = 760;
                         }
                         else if (townBackgroundRect.Right >= 0)
                         {
+                            if (mainCharacterRect.X >= 500)
+                                mainCharacterRect.X = 500;
                             CollisionRect._speed.X = -2;
                             trainStationCharacterRect2.X -= 2;
                         }
-                    }
-                    if (mainCharacterRect.Bottom >= 505 && Keyboard.GetState().IsKeyDown(Keys.Down))
-                    {
-                        mainCharacterRect.Y = 425;
+                    }                   
+                    if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                    {                      
                         townBackgroundRect.Y -= 2;
                         townTopLayerRect.Y -= 2;
                         if (townBackgroundRect.Bottom <= 600)
                         {
                             townBackgroundRect.Y = -1700;
                             townTopLayerRect.Y = -1700;
+                            if (mainCharacterRect.Bottom >= 600)
+                                mainCharacterRect.Y = 520;
                         }
                         else if (townBackgroundRect.Bottom >= 0)
                         {
+                            if (mainCharacterRect.Y >= 400)
+                                mainCharacterRect.Y = 400;
                             CollisionRect._speed.Y = -2;
                             trainStationCharacterRect2.Y -= 2;
                         }
@@ -535,8 +541,8 @@ namespace Final_Game_Project
                         {
                             walkingValue *= -1;
                             startTime = (float)gameTime.TotalGameTime.TotalSeconds;
-                        }
-                        mainCharacterRect.Y -= 2;
+                        }                     
+                        mainCharacterRect.Y -= 2;                     
                     }
                     else
                         up = false;
@@ -572,8 +578,8 @@ namespace Final_Game_Project
                         {
                             walkingValue *= -1;
                             startTime = (float)gameTime.TotalGameTime.TotalSeconds;
-                        }
-                        mainCharacterRect.X -= 2;
+                        }                      
+                        mainCharacterRect.X -= 2;                     
                     }
                     else
                         left = false;
@@ -616,6 +622,7 @@ namespace Final_Game_Project
                 _spriteBatch.DrawString(arcadeClassicFont, "Right  Arrow     Right", new Vector2(200, 300), Color.Black);
                 _spriteBatch.DrawString(arcadeClassicFont, "Down  Arrow     Down", new Vector2(200, 350), Color.Black);
                 _spriteBatch.DrawString(arcadeClassicFont, "I     Interact", new Vector2(200, 400), Color.Black);
+                _spriteBatch.DrawString(arcadeClassicFont, "M     Map", new Vector2(200, 450), Color.Black);
             }
             else if (screen == Screen.OpeningAnimation)
             {
