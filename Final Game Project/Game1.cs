@@ -78,6 +78,7 @@ namespace Final_Game_Project
         Texture2D mapTexture;
         Rectangle mapRect;
         bool map;
+        bool intoTown;
 
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
@@ -136,6 +137,7 @@ namespace Final_Game_Project
             sideCharcterText = false;
             sideCharcterText2 = false;
             map = false;
+            intoTown = false;
             base.Initialize();
             barriers = new List<CollisionRect>();
             barriers.Add(new CollisionRect(rectangleTexture, 46, 418, 441, 100));
@@ -213,10 +215,10 @@ namespace Final_Game_Project
                     {
                         baseMusicSEI.Stop();
                         //
-                        screen = Screen.Town;
-                        mainCharacterRect.X = 40;
-                        mainCharacterRect.Y = 400;
-                        //screen = Screen.OpeningAnimation;
+                        //screen = Screen.TrainStation;
+                        //mainCharacterRect.X = 40;
+                        //mainCharacterRect.Y = 400;
+                        screen = Screen.OpeningAnimation;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
@@ -296,18 +298,16 @@ namespace Final_Game_Project
                         {
                             trainStationBackgroundRect.Y = 0;
                         }
-                    }
-                    if (mainCharacterRect.Right >= 700 && Keyboard.GetState().IsKeyDown(Keys.Right))
-                    {
-                        mainCharacterRect.X = 660;
+                    }                   
+                    if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                    {                                              
                         trainStationBackgroundRect.X -= 2;
                         if (trainStationBackgroundRect.Right <= 800)
-                        {
-                            trainStationBackgroundRect.X = -700;
-                            screen = Screen.Town;
-                            mainCharacterRect.X = 40;
-                            mainCharacterRect.Y = 400;
-                            animation2Num = 0;
+                        {                                                          
+                            if (mainCharacterRect.Right >= 800)
+                                mainCharacterRect.X = 760;
+                                intoTown = true;
+                            trainStationBackgroundRect.X = -700;                                                            
                         }
                         else if (trainStationBackgroundRect.Right >= 0)
                         {
@@ -315,7 +315,9 @@ namespace Final_Game_Project
                             trainStationCharacterRect.X -= 2;
                             bubbleRect.X -= 2;
                             textLocation.X -= 2;
-                        }
+                            if (mainCharacterRect.X >= 500)
+                                mainCharacterRect.X = 500;
+                        }                 
                     }
                     if (mainCharacterRect.Bottom >= 505 && Keyboard.GetState().IsKeyDown(Keys.Down))
                     {
@@ -414,8 +416,14 @@ namespace Final_Game_Project
                             if (keyboardState.IsKeyDown(Keys.Right))
                                 mainCharacterRect.X -= 2;
                         }
-                    }      
-
+                    } 
+                    if (intoTown)
+                    {
+                        screen = Screen.Town;
+                        mainCharacterRect.X = 40;
+                        mainCharacterRect.Y = 400;
+                        animation2Num = 0;
+                    }                       
                 }
                 else
                 {
@@ -425,7 +433,7 @@ namespace Final_Game_Project
                 }
             }
             else if (screen == Screen.Town)
-            {
+            {                                
                 if (!map)
                 {
                     if (keyboardState.IsKeyDown(Keys.M))                                               
@@ -781,16 +789,15 @@ namespace Final_Game_Project
     }
 
     //To Do:   
-    //add collison rects
-    //make a class for diffrent quests  
-    //fix player moving to edge  
+    //add collison rects    
+    //fix player moving to edge  (train station)
     //change base music
     //fix text loading screen
     //add a way to go between screens
     //add rects to change screens
     //add credit on intro screen
-    //fix character moving too fast problem//
-    //fix moving map problem for right and bottom//
+    //fix problem with going into town level
+    //fix moving charcter when text into display
     //rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
     //rect2 = new CollisionRect(rectangleTexture, 582, 403, 168, 50);
     //rect3 = new CollisionRect(rectangleTexture, 50, 104, 610, 143);
