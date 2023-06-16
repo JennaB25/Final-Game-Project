@@ -844,6 +844,7 @@ namespace Final_Game_Project
     //add credit on intro screen
     //fix problem with rects not showing up//
     //fix going right into rects on train level not working//
+    //fix options screen not working//
     //fix moving charcter when text into display
     //rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
     //rect2 = new CollisionRect(rectangleTexture, 582, 403, 168, 50);
