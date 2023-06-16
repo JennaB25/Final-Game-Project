@@ -35,8 +35,7 @@ namespace Final_Game_Project
         Texture2D buttonTexture;
         Rectangle startButtonCollisionRect;
         Rectangle optionsButtonCollisionRect;
-        Texture2D mainCharacterSpritesheet;
-        List<Texture2D> mainCharacterTextures;
+        Texture2D mainCharacterSpritesheet;       
         Rectangle mainCharacterRect;
         Texture2D trainStationCharacterTexture;
         Rectangle trainStationCharacterRect;
@@ -45,32 +44,19 @@ namespace Final_Game_Project
         Rectangle sourceRect;
         Rectangle introAnimationRect;
         Rectangle trainAnimationRect;
-        Rectangle backButtonCollisionRect;
-        int animationNum;
-        int animation2Num;
+        Rectangle backButtonCollisionRect;     
         Texture2D trainStationBackgroundTexture;
         Rectangle trainStationBackgroundRect;
         Texture2D bubbleTexture;
         Rectangle bubbleRect;
         Texture2D rectangleTexture;
-        Vector2 textLocation;
-        int walkingValue;
-        float seconds;
-        float startTime;
+        Vector2 textLocation;        
         SoundEffect introAnimationSound;
         SoundEffectInstance introAnimationSEI;
         SoundEffect baseMusic;
-        SoundEffectInstance baseMusicSEI;
-        List<CollisionRect> barriersTrain;
-        List<CollisionRect> barriersTown;
-        CollisionRect rect1;
-        CollisionRect rect2;
-        CollisionRect rect3;
+        SoundEffectInstance baseMusicSEI;          
         Texture2D interactButtonTexture;
-        Rectangle interactButtonRect;
-        bool sideCharcterProximity;
-        bool sideCharcterText;
-        bool sideCharcterText2;
+        Rectangle interactButtonRect;      
         Texture2D townBackgroundTexture;
         Rectangle townBackgroundRect;
         Texture2D townTopLayerTexture;
@@ -78,9 +64,22 @@ namespace Final_Game_Project
         Rectangle paperBackgroundRect3;
         Texture2D mapTexture;
         Rectangle mapRect;
+        SoundEffect clickSound;
+        SoundEffectInstance clickSoundSEI;
+        int animationNum;
+        int animation2Num;
+        int walkingValue;
+        float seconds;
+        float startTime;
+        bool sideCharcterProximity;
+        bool sideCharcterText;
+        bool sideCharcterText2;
         bool map;
         bool intoTown;
 
+        List<Texture2D> mainCharacterTextures;
+        List<CollisionRect> barriersTrain;
+        List<CollisionRect> barriersTown;
         List<Texture2D> introAnimation;
         List<Texture2D> trainAnimation;
 
@@ -172,19 +171,22 @@ namespace Final_Game_Project
             buttonTexture = Content.Load<Texture2D>("buttonTexture");
             mainCharacterSpritesheet = Content.Load<Texture2D>("spritesheet");
             trainStationBackgroundTexture = Content.Load<Texture2D>("trainStation");
-            rectangleTexture = Content.Load<Texture2D>("rectangle");
-            introAnimationSound = Content.Load<SoundEffect>("introAnimationSound");
+            rectangleTexture = Content.Load<Texture2D>("rectangle");            
             trainStationCharacterTexture = Content.Load<Texture2D>("trainStationCharcter");
             bubbleTexture = Content.Load<Texture2D>("bubble");
             interactButtonTexture = Content.Load<Texture2D>("interactButton");
             townBackgroundTexture = Content.Load<Texture2D>("villageMap");
             townTopLayerTexture = Content.Load<Texture2D>("townTopLayer");
             mapTexture = Content.Load<Texture2D>("map");
+            introAnimationSound = Content.Load<SoundEffect>("introAnimationSound");
             introAnimationSEI = introAnimationSound.CreateInstance();
             introAnimationSEI.IsLooped = false;
             baseMusic = Content.Load<SoundEffect>("backgroundMusic");
             baseMusicSEI = baseMusic.CreateInstance();
             baseMusicSEI.IsLooped = true;
+            clickSound = Content.Load<SoundEffect>("altClickSound");
+            clickSoundSEI = clickSound.CreateInstance();
+            clickSoundSEI.IsLooped = false;
             int width = mainCharacterSpritesheet.Width / 3;
             int height = mainCharacterSpritesheet.Height / 4;
             for (int y = 0; y < 4; y++)
@@ -216,16 +218,18 @@ namespace Final_Game_Project
                 {
                     if (startButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
+                        clickSoundSEI.Play();
                         baseMusicSEI.Stop();
                         //
-                        screen = Screen.TrainStation;
-                        //mainCharacterRect.X = 40;
-                        //mainCharacterRect.Y = 400;
+                        screen = Screen.Town;
+                        mainCharacterRect.X = 40;
+                        mainCharacterRect.Y = 400;
                         //screen = Screen.OpeningAnimation;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
+                        clickSoundSEI.Play();
                         screen = Screen.Options;
                     }
                 }
@@ -234,6 +238,7 @@ namespace Final_Game_Project
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
                     if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
+                        clickSoundSEI.Play();
                         screen = Screen.Intro;
             }
             else if (screen == Screen.OpeningAnimation)
@@ -256,9 +261,11 @@ namespace Final_Game_Project
             {
                 if (!map)
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))                      
-                            map = true;
-
+                    if (keyboardState.IsKeyDown(Keys.M))
+                    {
+                        clickSoundSEI.Play();
+                        map = true;
+                    }                     
                     baseMusicSEI.Play();
                     if (seconds >= 0.2)
                     {
@@ -350,9 +357,15 @@ namespace Final_Game_Project
                     interactButtonRect.Y = mainCharacterRect.Y - 25;
                                        
                     if (keyboardState.IsKeyDown(Keys.I) && sideCharcterText)
-                            sideCharcterText = false;
+                    {
+                        sideCharcterText = false;
+                        clickSoundSEI.Play();
+                    }                                            
                     else if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
+                    {
                         sideCharcterText = true;
+                        clickSoundSEI.Play();
+                    }
                     //---------------------------//
                     if (keyboardState.IsKeyDown(Keys.Up))
                     {
@@ -405,7 +418,6 @@ namespace Final_Game_Project
                         left = false;
                     down = true;
 
-
                     foreach (CollisionRect barrier in barriersTrain)
                     {
                         if (barrier.Collide(mainCharacterRect))
@@ -432,16 +444,21 @@ namespace Final_Game_Project
                 {
                     if (keyboardState.IsKeyDown(Keys.M))
                         if (map)
+                        {
                             map = false;
+                            clickSoundSEI.Play();
+                        }                           
                 }
             }
             else if (screen == Screen.Town)
             {                                
                 if (!map)
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))                                               
-                         map = true;
-
+                    if (keyboardState.IsKeyDown(Keys.M))
+                    {
+                        clickSoundSEI.Play();
+                        map = true;
+                    }
                     //-------//
                     if (trainStationCharacterRect2.Intersects(mainCharacterRect))
                         sideCharcterProximity = true;
@@ -453,9 +470,15 @@ namespace Final_Game_Project
 
                     if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
                         if (sideCharcterText2)
+                        {
                             sideCharcterText2 = false;
+                            clickSoundSEI.Play();
+                        }
                         else
+                        {
                             sideCharcterText2 = true;
+                            clickSoundSEI.Play();
+                        }                        
                     //-------//
                     if (seconds >= 0.2)
                     {
@@ -464,9 +487,9 @@ namespace Final_Game_Project
                     }
                     else if (animation2Num >= 17)
                     {
-                        //               
+                        //
                     }
-                    CollisionRect._speed = new Vector2();                
+                    CollisionRect._speed = new Vector2();
                     if (Keyboard.GetState().IsKeyDown(Keys.Left))
                     {
                         townBackgroundRect.X += 2;
@@ -615,7 +638,10 @@ namespace Final_Game_Project
                 {
                     if (keyboardState.IsKeyDown(Keys.M))
                         if (map)
+                        {
                             map = false;
+                            clickSoundSEI.Play();
+                        }                          
                 }
             }
             base.Update(gameTime);
@@ -811,9 +837,7 @@ namespace Final_Game_Project
     }
 
     //To Do:   
-    //add collison rects    
-    //fix player moving to edge  (train station)
-    //change base music
+    //add collison rects        
     //fix text loading screen
     //add a way to go between screens
     //add rects to change screens

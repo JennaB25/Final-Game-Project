@@ -13,6 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin altClickSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:altClickSound.wav
+
 #begin ARCADECLASSIC[1].TTF
 /copy:ARCADECLASSIC[1].TTF
 
