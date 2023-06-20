@@ -20,7 +20,7 @@ namespace Final_Game_Project
         }
         Screen screen;
         MouseState mouseState;
-        KeyboardState keyboardState;
+        KeyboardState keyboardState, previousKeyboardState;
         Texture2D introScreenTexture;
         Rectangle introScreenRect;
         Texture2D titleTexture;
@@ -66,6 +66,8 @@ namespace Final_Game_Project
         Rectangle mapRect;
         SoundEffect clickSound;
         SoundEffectInstance clickSoundSEI;
+        Texture2D townie1Texture;
+        Rectangle townie1Rect;
         int animationNum;
         int animation2Num;
         int walkingValue;
@@ -131,6 +133,7 @@ namespace Final_Game_Project
             townTopLayerRect = new Rectangle(0, -1500, 2500, 2300);
             paperBackgroundRect3 = new Rectangle(100, 50, 600, 300);
             mapRect = new Rectangle(50, 50, 700, 500);
+            townie1Rect = new Rectangle(0, 0, 40, 80);
             walkingValue = 1;
             animationNum = 0;
             sideCharcterProximity = false;
@@ -185,6 +188,7 @@ namespace Final_Game_Project
             baseMusicSEI = baseMusic.CreateInstance();
             baseMusicSEI.IsLooped = true;
             clickSound = Content.Load<SoundEffect>("altClickSound");
+            townie1Texture = Content.Load<Texture2D>("townie1");
             clickSoundSEI = clickSound.CreateInstance();
             clickSoundSEI.IsLooped = false;
             int width = mainCharacterSpritesheet.Width / 3;
@@ -208,6 +212,7 @@ namespace Final_Game_Project
                 Exit();
 
             mouseState = Mouse.GetState();
+            previousKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
             seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
 
@@ -221,25 +226,25 @@ namespace Final_Game_Project
                         clickSoundSEI.Play();
                         baseMusicSEI.Stop();
                         //
-                        screen = Screen.Town;
-                        mainCharacterRect.X = 40;
-                        mainCharacterRect.Y = 400;
+                        screen = Screen.TrainStation;
+                        //mainCharacterRect.X = 40;
+                        //mainCharacterRect.Y = 400;
                         //screen = Screen.OpeningAnimation;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                    {
-                        clickSoundSEI.Play();
+                    {                     
                         screen = Screen.Options;
+                        clickSoundSEI.Play();
                     }
                 }
             }
             else if (screen == Screen.Options)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
-                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                        clickSoundSEI.Play();
+                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))                        
                         screen = Screen.Intro;
+                        clickSoundSEI.Play();
             }
             else if (screen == Screen.OpeningAnimation)
             {
@@ -261,7 +266,7 @@ namespace Final_Game_Project
             {
                 if (!map)
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))
+                    if (keyboardState.IsKeyDown(Keys.M) && previousKeyboardState.IsKeyUp(Keys.M))
                     {
                         clickSoundSEI.Play();
                         map = true;
@@ -355,17 +360,26 @@ namespace Final_Game_Project
                         sideCharcterProximity = false;
                     interactButtonRect.X = mainCharacterRect.X + 25;
                     interactButtonRect.Y = mainCharacterRect.Y - 25;
-                                       
-                    if (keyboardState.IsKeyDown(Keys.I) && sideCharcterText)
+                    
+                    //                                                    
+                    if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity)
                     {
-                        sideCharcterText = false;
                         clickSoundSEI.Play();
-                    }                                            
-                    else if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
-                    {
-                        sideCharcterText = true;
-                        clickSoundSEI.Play();
+                        if (sideCharcterText)
+                            sideCharcterText = false;
+                        else
+                            sideCharcterText = true;                       
                     }
+                    //else if (keyboardState.IsKey(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I))
+                    //{
+                        //sideCharcterText = false;
+                        //clickSoundSEI.Play();
+                    //}
+                    //if (keyboardState.IsKeyUp(Keys.I) && previousKeyboardState.IsKeyDown(Keys.I) && sideCharcterText)
+                    //{
+                    //    sideCharcterText = false;
+                    //    clickSoundSEI.Play();
+                    //}
                     //---------------------------//
                     if (keyboardState.IsKeyDown(Keys.Up))
                     {
@@ -442,7 +456,7 @@ namespace Final_Game_Project
                 }
                 else
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))
+                    if (keyboardState.IsKeyDown(Keys.M) && previousKeyboardState.IsKeyUp(Keys.M))
                         if (map)
                         {
                             map = false;
@@ -454,7 +468,7 @@ namespace Final_Game_Project
             {                                
                 if (!map)
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))
+                    if (keyboardState.IsKeyDown(Keys.M) && previousKeyboardState.IsKeyUp(Keys.M))
                     {
                         clickSoundSEI.Play();
                         map = true;
@@ -468,17 +482,14 @@ namespace Final_Game_Project
                     interactButtonRect.X = mainCharacterRect.X + 25;
                     interactButtonRect.Y = mainCharacterRect.Y - 25;
 
-                    if (keyboardState.IsKeyDown(Keys.I) && sideCharcterProximity)
+                    if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity)
+                    {
+                        clickSoundSEI.Play();
                         if (sideCharcterText2)
-                        {
                             sideCharcterText2 = false;
-                            clickSoundSEI.Play();
-                        }
                         else
-                        {
                             sideCharcterText2 = true;
-                            clickSoundSEI.Play();
-                        }                        
+                    }
                     //-------//
                     if (seconds >= 0.2)
                     {
@@ -491,7 +502,7 @@ namespace Final_Game_Project
                     }
                     CollisionRect._speed = new Vector2();
                     if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                    {
+                    {                                                
                         townBackgroundRect.X += 2;
                         townTopLayerRect.X += 2;                       
                         if (townBackgroundRect.Left <= 0)
@@ -636,7 +647,7 @@ namespace Final_Game_Project
                 }
                 else
                 {
-                    if (keyboardState.IsKeyDown(Keys.M))
+                    if (keyboardState.IsKeyDown(Keys.M) && previousKeyboardState.IsKeyUp(Keys.M))
                         if (map)
                         {
                             map = false;
@@ -645,6 +656,7 @@ namespace Final_Game_Project
                 }
             }
             base.Update(gameTime);
+                
         }
 
         protected override void Draw(GameTime gameTime)
@@ -675,6 +687,7 @@ namespace Final_Game_Project
                 _spriteBatch.DrawString(arcadeClassicFont, "Down  Arrow     Down", new Vector2(200, 350), Color.Black);
                 _spriteBatch.DrawString(arcadeClassicFont, "I     Interact", new Vector2(200, 400), Color.Black);
                 _spriteBatch.DrawString(arcadeClassicFont, "M     Map", new Vector2(200, 450), Color.Black);
+                _spriteBatch.DrawString(arcadeClassicFont, "Made by JB", new Vector2(600, 560), Color.Black);
             }
             else if (screen == Screen.OpeningAnimation)
             {
@@ -686,7 +699,6 @@ namespace Final_Game_Project
                 {
                     _spriteBatch.Draw(introAnimation[52], introAnimationRect, Color.White);
                 }
-
             }
             else if (screen == Screen.TrainStation)
             {
@@ -840,15 +852,11 @@ namespace Final_Game_Project
     //add collison rects        
     //fix text loading screen
     //add a way to go between screens
-    //add rects to change screens
-    //add credit on intro screen
+    //add rects to change screens   
     //fix problem with rects not showing up//
-    //fix going right into rects on train level not working//
-    //fix options screen not working//
-    //fix moving charcter when text into display
-    //rect1 = new CollisionRect(rectangleTexture, 46, 418, 441, 100);
-    //rect2 = new CollisionRect(rectangleTexture, 582, 403, 168, 50);
-    //rect3 = new CollisionRect(rectangleTexture, 50, 104, 610, 143);
+    //fix going right into rects on train level not working//    
+    //fix charcter moving when text is displayed//
+    //draw townie1 and add movment to townie1 and text//   
 
 
 }
