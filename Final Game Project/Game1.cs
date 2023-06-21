@@ -243,18 +243,18 @@ namespace Final_Game_Project
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                    {                     
-                        screen = Screen.Options;
+                    {
                         clickSoundSEI.Play();
+                        screen = Screen.Options;                       
                     }
                 }
             }
             else if (screen == Screen.Options)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
-                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))                        
-                        screen = Screen.Intro;
+                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                         clickSoundSEI.Play();
+                        screen = Screen.Intro;                      
             }
             else if (screen == Screen.OpeningAnimation)
             {
@@ -903,6 +903,7 @@ namespace Final_Game_Project
     //fix bubble showing up still after talking to max//
     //mention that J skips the into animation//
     //fix quest one problems//
+    //fix sound repeating when clicking options and add sound to exit button on options//
 
 
 }
