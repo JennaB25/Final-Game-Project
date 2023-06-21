@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Final_Game_Project
 {
@@ -76,8 +77,11 @@ namespace Final_Game_Project
         bool sideCharcterProximity;
         bool sideCharcterText;
         bool sideCharcterText2;
+        bool sideCharcterText3;
+        bool sideCharcterText4;
         bool map;
         bool intoTown;
+        bool questOne;
 
         List<Texture2D> mainCharacterTextures;
         List<CollisionRect> barriersTrain;
@@ -133,14 +137,17 @@ namespace Final_Game_Project
             townTopLayerRect = new Rectangle(0, -1500, 2500, 2300);
             paperBackgroundRect3 = new Rectangle(100, 50, 600, 300);
             mapRect = new Rectangle(50, 50, 700, 500);
-            townie1Rect = new Rectangle(0, 0, 40, 80);
+            townie1Rect = new Rectangle(1935, -600, 40, 80);
             walkingValue = 1;
             animationNum = 0;
             sideCharcterProximity = false;
             sideCharcterText = false;
             sideCharcterText2 = false;
+            sideCharcterText3 = false;
+            sideCharcterText4 = false;
             map = false;
             intoTown = false;
+            questOne = false;
             base.Initialize();
             barriersTrain = new List<CollisionRect>();
             barriersTown = new List<CollisionRect>();
@@ -219,17 +226,20 @@ namespace Final_Game_Project
             if (screen == Screen.Intro)
             {
                 baseMusicSEI.Play();
+                //Testing//
+                if (keyboardState.IsKeyDown(Keys.J))
+                {
+                    screen = Screen.Town;
+                    mainCharacterRect.X = 40;
+                    mainCharacterRect.Y = 400;
+                }               
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     if (startButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
                     {
                         clickSoundSEI.Play();
-                        baseMusicSEI.Stop();
-                        //
-                        screen = Screen.TrainStation;
-                        //mainCharacterRect.X = 40;
-                        //mainCharacterRect.Y = 400;
-                        //screen = Screen.OpeningAnimation;
+                        baseMusicSEI.Stop();                                              
+                        screen = Screen.OpeningAnimation;
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
@@ -369,17 +379,7 @@ namespace Final_Game_Project
                             sideCharcterText = false;
                         else
                             sideCharcterText = true;                       
-                    }
-                    //else if (keyboardState.IsKey(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I))
-                    //{
-                        //sideCharcterText = false;
-                        //clickSoundSEI.Play();
-                    //}
-                    //if (keyboardState.IsKeyUp(Keys.I) && previousKeyboardState.IsKeyDown(Keys.I) && sideCharcterText)
-                    //{
-                    //    sideCharcterText = false;
-                    //    clickSoundSEI.Play();
-                    //}
+                    }                   
                     //---------------------------//
                     if (keyboardState.IsKeyDown(Keys.Up))
                     {
@@ -474,7 +474,7 @@ namespace Final_Game_Project
                         map = true;
                     }
                     //-------//
-                    if (trainStationCharacterRect2.Intersects(mainCharacterRect))
+                    if (trainStationCharacterRect2.Intersects(mainCharacterRect) || townie1Rect.Intersects(mainCharacterRect))
                         sideCharcterProximity = true;
                     else
                         sideCharcterProximity = false;
@@ -482,13 +482,37 @@ namespace Final_Game_Project
                     interactButtonRect.X = mainCharacterRect.X + 25;
                     interactButtonRect.Y = mainCharacterRect.Y - 25;
 
-                    if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity)
-                    {
+                    if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity && mainCharacterRect.Intersects(trainStationCharacterRect2))
+                    {                       
                         clickSoundSEI.Play();
-                        if (sideCharcterText2)
-                            sideCharcterText2 = false;
+                        if (questOne == false)
+                        {
+                            if (sideCharcterText4)
+                                sideCharcterText4 = false;
+                            else
+                                sideCharcterText4 = true;                            
+                        }
                         else
-                            sideCharcterText2 = true;
+                            questOne = true;
+                            if (sideCharcterText2)
+                                sideCharcterText2 = false;                           
+                            else
+                                sideCharcterText2 = true;                          
+                    }                   
+
+                    if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity && mainCharacterRect.Intersects(townie1Rect))
+                    {
+                        clickSoundSEI.Play();                       
+                    if (sideCharcterText3)
+                    { 
+                        sideCharcterText3 = false;
+                        if (mainCharacterRect.X <= 1197)
+                            questOne = false;
+                            townie1Rect.X = 3000;
+                            townie1Rect.Y = 3000;
+                    }
+                    else
+                        sideCharcterText3 = true;                          
                     }
                     //-------//
                     if (seconds >= 0.2)
@@ -511,6 +535,7 @@ namespace Final_Game_Project
                                 mainCharacterRect.X = 200;
                             CollisionRect._speed.X = 2;
                             trainStationCharacterRect2.X += 2;
+                            townie1Rect.X += 2;
                         }
                         else if (townBackgroundRect.Left >= 0)
                         {
@@ -530,6 +555,7 @@ namespace Final_Game_Project
                                 mainCharacterRect.Y = 200;
                             CollisionRect._speed.Y = 2;
                             trainStationCharacterRect2.Y += 2;
+                            townie1Rect.Y += 2;
                         }
                         else if (townBackgroundRect.Top >= 0)
                         {
@@ -556,6 +582,7 @@ namespace Final_Game_Project
                                 mainCharacterRect.X = 500;
                             CollisionRect._speed.X = -2;
                             trainStationCharacterRect2.X -= 2;
+                            townie1Rect.X -= 2;
                         }
                     }                   
                     if (Keyboard.GetState().IsKeyDown(Keys.Down))
@@ -575,6 +602,7 @@ namespace Final_Game_Project
                                 mainCharacterRect.Y = 400;
                             CollisionRect._speed.Y = -2;
                             trainStationCharacterRect2.Y -= 2;
+                            townie1Rect.Y -= 2;
                         }
                     }
                     foreach (CollisionRect barrier in barriersTown)
@@ -782,6 +810,7 @@ namespace Final_Game_Project
                 //----//
                 _spriteBatch.Draw(townBackgroundTexture, townBackgroundRect, Color.White);
                 _spriteBatch.Draw(trainStationCharacterTexture, trainStationCharacterRect2, Color.White);
+                _spriteBatch.Draw(townie1Texture, townie1Rect, Color.White);
                 if (sideCharcterProximity)
                 {
                     _spriteBatch.Draw(interactButtonTexture, interactButtonRect, Color.White);
@@ -836,6 +865,19 @@ namespace Final_Game_Project
                     _spriteBatch.DrawString(textFont, "by opening your map (pressing M) and looking for the number five. When", new Vector2(200, 190), Color.Black);
                     _spriteBatch.DrawString(textFont, "you've finished come and see me.", new Vector2(200, 210), Color.Black);                 
                 }
+                if (sideCharcterText3)
+                {
+                    _spriteBatch.Draw(paperBackgroundTexture, paperBackgroundRect3, Color.White);
+                    _spriteBatch.DrawString(textFont, "Thank you dear. I don't know what I would have done if I never got my", new Vector2(200, 150), Color.Black);
+                    _spriteBatch.DrawString(textFont, "package. You can tell Max that I think you're doing a great job.", new Vector2(200, 170), Color.Black);
+                }
+                if (sideCharcterText4)
+                {
+                    _spriteBatch.Draw(paperBackgroundTexture, paperBackgroundRect3, Color.White);
+                    _spriteBatch.DrawString(textFont, "So did Mary get her package? She did! That's great to hear. Well", new Vector2(200, 150), Color.Black);
+                    _spriteBatch.DrawString(textFont, "this next one might be a bit of a challange. It's for Mr.Cust at", new Vector2(200, 170), Color.Black);
+                    _spriteBatch.DrawString(textFont, "house number 3. He has a dog whos not really friendly so be careful.", new Vector2(200, 190), Color.Black);
+                }
                 if (map)
                 {
                     _spriteBatch.Draw(mapTexture, mapRect, Color.White);
@@ -856,7 +898,11 @@ namespace Final_Game_Project
     //fix problem with rects not showing up//
     //fix going right into rects on train level not working//    
     //fix charcter moving when text is displayed//
-    //draw townie1 and add movment to townie1 and text//   
+    //fix townie1 convo on Max after meeting her//
+    //play package animation or something to show you have a package (maybe a counter at the top)//
+    //fix bubble showing up still after talking to max//
+    //mention that J skips the into animation//
+    //fix quest one problems//
 
 
 }
