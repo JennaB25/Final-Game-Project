@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Final_Game_Project
 {
@@ -147,7 +145,7 @@ namespace Final_Game_Project
             sideCharcterText4 = false;
             map = false;
             intoTown = false;
-            questOne = false;
+            questOne = true;
             base.Initialize();
             barriersTrain = new List<CollisionRect>();
             barriersTown = new List<CollisionRect>();
@@ -243,17 +241,16 @@ namespace Final_Game_Project
                         startTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
                     else if (optionsButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                    {
+                    {                    
+                        screen = Screen.Options;
                         clickSoundSEI.Play();
-                        screen = Screen.Options;                       
                     }
                 }
             }
             else if (screen == Screen.Options)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
-                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))
-                        clickSoundSEI.Play();
+                    if (backButtonCollisionRect.Contains(mouseState.X, mouseState.Y))                      
                         screen = Screen.Intro;                      
             }
             else if (screen == Screen.OpeningAnimation)
@@ -485,19 +482,23 @@ namespace Final_Game_Project
                     if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity && mainCharacterRect.Intersects(trainStationCharacterRect2))
                     {                       
                         clickSoundSEI.Play();
+                                                   
                         if (questOne == false)
                         {
+                            clickSoundSEI.Play();
                             if (sideCharcterText4)
                                 sideCharcterText4 = false;
                             else
-                                sideCharcterText4 = true;                            
+                                sideCharcterText4 = true;
                         }
                         else
+                        {
                             questOne = true;
                             if (sideCharcterText2)
-                                sideCharcterText2 = false;                           
+                                sideCharcterText2 = false;
                             else
-                                sideCharcterText2 = true;                          
+                                sideCharcterText2 = true;
+                        }
                     }                   
 
                     if (keyboardState.IsKeyDown(Keys.I) && previousKeyboardState.IsKeyUp(Keys.I) && sideCharcterProximity && mainCharacterRect.Intersects(townie1Rect))
@@ -891,10 +892,10 @@ namespace Final_Game_Project
     }
 
     //To Do:   
-    //add collison rects        
-    //fix text loading screen
-    //add a way to go between screens
-    //add rects to change screens   
+    //add collison rects //       
+    //fix text loading screen//
+    //add a way to go between screens//
+    //add rects to change screens //  
     //fix problem with rects not showing up//
     //fix going right into rects on train level not working//    
     //fix charcter moving when text is displayed//
@@ -902,8 +903,6 @@ namespace Final_Game_Project
     //play package animation or something to show you have a package (maybe a counter at the top)//
     //fix bubble showing up still after talking to max//
     //mention that J skips the into animation//
-    //fix quest one problems//
-    //fix sound repeating when clicking options and add sound to exit button on options//
 
 
 }
